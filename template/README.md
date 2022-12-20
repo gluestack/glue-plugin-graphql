@@ -1,0 +1,1 @@
+@gluestack/glue-plugin-graphql

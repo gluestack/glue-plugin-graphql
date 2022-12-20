@@ -1,0 +1,3 @@
+const { GlueStackPlugin } = require("./");
+
+require("@gluestack/framework")([GlueStackPlugin]);
