@@ -3,13 +3,26 @@ import IApp from "@gluestack/framework/types/app/interface/IApp";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 import IContainerController from "@gluestack/framework/types/plugin/interface/IContainerController";
 import { IHasPostgresInstance } from "./interfaces/IHasPostgresInstance";
+const { GlobalEnv } = require("@gluestack/helpers");
+
+const defaultEnv: any = {
+  HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
+  HASURA_GRAPHQL_DEV_MODE: "true",
+  HASURA_GRAPHQL_ENABLED_LOG_TYPES:
+    "startup, http-log, webhook-log, websocket-log, query-log",
+  HASURA_GRAPHQL_ADMIN_SECRET: "secret",
+  HASURA_GRAPHQL_JWT_SECRET: JSON.stringify({
+    type: "HS256",
+    key: "f7eb8518-a85e-45f1-983d-43ae8b5f92d7",
+  }),
+  HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous",
+};
 
 export class PluginInstanceContainerController implements IContainerController {
   app: IApp;
   status: "up" | "down" = "down";
   portNumber: number;
   containerId: string;
-  dockerfile: string;
   callerInstance: IInstance & IHasPostgresInstance;
 
   constructor(app: IApp, callerInstance: IInstance & IHasPostgresInstance) {
@@ -26,12 +39,26 @@ export class PluginInstanceContainerController implements IContainerController {
     return this.callerInstance;
   }
 
-  getEnv() {
+  async getFromGlobalEnv(key: string, defaultValue?: string) {
+    const value = await GlobalEnv.get(this.callerInstance.getName(), key);
+    if (!value) {
+      await GlobalEnv.set(this.callerInstance.getName(), key, defaultValue);
+      return defaultValue;
+    }
+    return value;
+  }
+
+  async getEnv() {
     if (!this.callerInstance.getPostgresInstance()) {
       throw new Error("Postgres instance not found");
     }
     if (!this.callerInstance.getPostgresInstance().getConnectionString()) {
       throw new Error("Postgres instance not started");
+    }
+
+    const env: any = {};
+    for (const key in defaultEnv) {
+      env[key] = await this.getFromGlobalEnv(key, defaultEnv[key]);
     }
     return {
       HASURA_GRAPHQL_METADATA_DATABASE_URL: this.callerInstance
@@ -40,16 +67,7 @@ export class PluginInstanceContainerController implements IContainerController {
       PG_DATABASE_URL: this.callerInstance
         .getPostgresInstance()
         .getConnectionString(),
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
-      HASURA_GRAPHQL_DEV_MODE: "true",
-      HASURA_GRAPHQL_ENABLED_LOG_TYPES:
-        "startup, http-log, webhook-log, websocket-log, query-log",
-      HASURA_GRAPHQL_ADMIN_SECRET: "secret",
-      HASURA_GRAPHQL_JWT_SECRET: JSON.stringify({
-        type: "HS256",
-        key: "f7eb8518-a85e-45f1-983d-43ae8b5f92d7",
-      }),
-      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous",
+      ...env,
     };
   }
 
@@ -110,11 +128,6 @@ export class PluginInstanceContainerController implements IContainerController {
     return (this.containerId = containerId || null);
   }
 
-  setDockerfile(dockerfile: string) {
-    this.callerInstance.gluePluginStore.set("dockerfile", dockerfile || null);
-    return (this.dockerfile = dockerfile || null);
-  }
-
   getConfig(): any {}
 
   async up() {
@@ -132,8 +145,10 @@ export class PluginInstanceContainerController implements IContainerController {
       );
     }
     if (
-      this.callerInstance.getPostgresInstance()?.getContainerController()
-        ?.status !== "up"
+      this.callerInstance
+        .getPostgresInstance()
+        ?.getContainerController()
+        ?.getStatus() !== "up"
     ) {
       await this.callerInstance
         .getPostgresInstance()
@@ -146,11 +161,12 @@ export class PluginInstanceContainerController implements IContainerController {
 
     await new Promise(async (resolve, reject) => {
       DockerodeHelper.getPort(this.getPortNumber(true), ports)
-        .then((port: number) => {
+
+        .then(async (port: number) => {
           this.portNumber = port;
           DockerodeHelper.up(
             this.getDockerJson(),
-            this.getEnv(),
+            await this.getEnv(),
             this.portNumber,
             this.callerInstance.getName(),
           )
@@ -159,17 +175,14 @@ export class PluginInstanceContainerController implements IContainerController {
                 status,
                 portNumber,
                 containerId,
-                dockerfile,
               }: {
                 status: "up" | "down";
                 portNumber: number;
                 containerId: string;
-                dockerfile: string;
               }) => {
                 this.setStatus(status);
                 this.setPortNumber(portNumber);
                 this.setContainerId(containerId);
-                this.setDockerfile(dockerfile);
                 ports.push(portNumber);
                 this.callerInstance.callerPlugin.gluePluginStore.set(
                   "ports",

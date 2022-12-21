@@ -8,6 +8,7 @@ import ILifeCycle from "@gluestack/framework/types/plugin/interface/ILifeCycle";
 import IManagesInstances from "@gluestack/framework/types/plugin/interface/IManagesInstances";
 import IGlueStorePlugin from "@gluestack/framework/types/store/interface/IGluePluginStore";
 import { attachPostgresInstance } from "./attachPostgresInstance";
+import { hasuraInit } from "./helpers/hasuraInit";
 
 //Do not edit the name of this class
 export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
@@ -56,6 +57,11 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     );
     //Validation
     if (!postgresPlugin || !postgresPlugin.getInstances().length) {
+      console.log("\x1b[36m");
+      console.log(
+        `Install postgres instance: \`node glue add postgres ${instanceName}-postgres\``,
+      );
+      console.log("\x1b[31m");
       throw new Error(
         "Postgres instance not installed from `@gluestack/glue-plugin-postgres`",
       );
@@ -78,13 +84,14 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
       );
     }
 
-    const grapqhlPlugin: PluginInstance = await this.app.createPluginInstance(
+    const graphqlInstance: PluginInstance = await this.app.createPluginInstance(
       this,
       instanceName,
       this.getTemplateFolderPath(),
       target,
     );
-    await attachPostgresInstance(grapqhlPlugin, postgresInstanceswithDB);
+    await attachPostgresInstance(graphqlInstance, postgresInstanceswithDB);
+    await hasuraInit(graphqlInstance);
   }
 
   createInstance(

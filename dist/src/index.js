@@ -43,6 +43,7 @@ exports.GlueStackPlugin = void 0;
 var package_json_1 = __importDefault(require("../package.json"));
 var PluginInstance_1 = require("./PluginInstance");
 var attachPostgresInstance_1 = require("./attachPostgresInstance");
+var hasuraInit_1 = require("./helpers/hasuraInit");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = "stateless";
@@ -72,12 +73,15 @@ var GlueStackPlugin = (function () {
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
-            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, _i, _d, instance, grapqhlPlugin;
+            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, _i, _d, instance, graphqlInstance;
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
                         postgresPlugin = this.app.getPluginByName("@gluestack/glue-plugin-postgres");
                         if (!postgresPlugin || !postgresPlugin.getInstances().length) {
+                            console.log("\x1b[36m");
+                            console.log("Install postgres instance: `node glue add postgres ".concat(instanceName, "-postgres`"));
+                            console.log("\x1b[31m");
                             throw new Error("Postgres instance not installed from `@gluestack/glue-plugin-postgres`");
                         }
                         hasDBConfig = false;
@@ -96,9 +100,12 @@ var GlueStackPlugin = (function () {
                         }
                         return [4, this.app.createPluginInstance(this, instanceName, this.getTemplateFolderPath(), target)];
                     case 1:
-                        grapqhlPlugin = _e.sent();
-                        return [4, (0, attachPostgresInstance_1.attachPostgresInstance)(grapqhlPlugin, postgresInstanceswithDB)];
+                        graphqlInstance = _e.sent();
+                        return [4, (0, attachPostgresInstance_1.attachPostgresInstance)(graphqlInstance, postgresInstanceswithDB)];
                     case 2:
+                        _e.sent();
+                        return [4, (0, hasuraInit_1.hasuraInit)(graphqlInstance)];
+                    case 3:
                         _e.sent();
                         return [2];
                 }

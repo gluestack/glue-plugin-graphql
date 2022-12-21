@@ -38,14 +38,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.attachPostgresInstance = exports.setPostgresConfig = void 0;
 var prompts = require("prompts");
-var setPostgresConfig = function (grapqhlPlugin, postgresInstance) { return __awaiter(void 0, void 0, void 0, function () {
+var setPostgresConfig = function (graphqlInstance, postgresInstance) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         if (!postgresInstance.gluePluginStore.get("db_config")) {
             console.error("\nThis instance does not have any config\n");
             return [2];
         }
-        grapqhlPlugin.gluePluginStore.set("postgres_instance", postgresInstance.getName());
-        return [2, grapqhlPlugin.gluePluginStore.get("postgres_instance")];
+        graphqlInstance.gluePluginStore.set("postgres_instance", postgresInstance.getName());
+        return [2, graphqlInstance.gluePluginStore.get("postgres_instance")];
     });
 }); };
 exports.setPostgresConfig = setPostgresConfig;
@@ -56,9 +56,10 @@ function selectPostgresInstance(postgresInstances) {
             switch (_a.label) {
                 case 0:
                     choices = postgresInstances.map(function (instance) {
+                        var _a;
                         return {
-                            title: instance.getName(),
-                            description: "Select ".concat(instance.getName(), " instance"),
+                            title: "".concat(instance.getName()),
+                            description: "Will attach database \"".concat((_a = instance.gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name, "\""),
                             value: instance
                         };
                     });
@@ -75,7 +76,7 @@ function selectPostgresInstance(postgresInstances) {
         });
     });
 }
-function attachPostgresInstance(grapqhlPlugin, postgresInstances) {
+function attachPostgresInstance(graphqlInstance, postgresInstances) {
     return __awaiter(this, void 0, void 0, function () {
         var instance;
         return __generator(this, function (_a) {
@@ -84,7 +85,7 @@ function attachPostgresInstance(grapqhlPlugin, postgresInstances) {
                 case 1:
                     instance = _a.sent();
                     if (!instance) return [3, 3];
-                    return [4, (0, exports.setPostgresConfig)(grapqhlPlugin, instance)];
+                    return [4, (0, exports.setPostgresConfig)(graphqlInstance, instance)];
                 case 2:
                     _a.sent();
                     _a.label = 3;

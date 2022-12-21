@@ -3,7 +3,7 @@ import { PluginInstance } from "./PluginInstance";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 
 export const setPostgresConfig = async (
-  grapqhlPlugin: PluginInstance,
+  graphqlInstance: PluginInstance,
   postgresInstance: PluginInstance,
 ) => {
   if (!postgresInstance.gluePluginStore.get("db_config")) {
@@ -11,18 +11,20 @@ export const setPostgresConfig = async (
     return;
   }
 
-  grapqhlPlugin.gluePluginStore.set(
+  graphqlInstance.gluePluginStore.set(
     "postgres_instance",
     postgresInstance.getName(),
   );
-  return grapqhlPlugin.gluePluginStore.get("postgres_instance");
+  return graphqlInstance.gluePluginStore.get("postgres_instance");
 };
 
 async function selectPostgresInstance(postgresInstances: IInstance[]) {
   const choices = postgresInstances.map((instance: PluginInstance) => {
     return {
-      title: instance.getName(),
-      description: `Select ${instance.getName()} instance`,
+      title: `${instance.getName()}`,
+      description: `Will attach database "${
+        instance.gluePluginStore.get("db_config")?.db_name
+      }"`,
       value: instance,
     };
   });
@@ -37,11 +39,11 @@ async function selectPostgresInstance(postgresInstances: IInstance[]) {
 }
 
 export async function attachPostgresInstance(
-  grapqhlPlugin: PluginInstance,
+  graphqlInstance: PluginInstance,
   postgresInstances: IInstance[],
 ) {
   const instance = await selectPostgresInstance(postgresInstances);
   if (instance) {
-    await setPostgresConfig(grapqhlPlugin, instance);
+    await setPostgresConfig(graphqlInstance, instance);
   }
 }
