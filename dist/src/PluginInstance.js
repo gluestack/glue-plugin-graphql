@@ -39,6 +39,7 @@ exports.__esModule = true;
 exports.PluginInstance = void 0;
 var PluginInstanceContainerController_1 = require("./PluginInstanceContainerController");
 var hasuraCommand_1 = require("./helpers/hasuraCommand");
+var postMetataData_1 = require("./helpers/postMetataData");
 var PluginInstance = (function () {
     function PluginInstance(app, callerPlugin, name, gluePluginStore, installationPath) {
         this.isOfTypeInstance = false;
@@ -63,8 +64,12 @@ var PluginInstance = (function () {
         return this.installationPath;
     };
     PluginInstance.prototype.getMigrationFolderPath = function () {
+        return "".concat(this.installationPath, "/migrations/").concat(this.getDbName());
+    };
+    PluginInstance.prototype.getDbName = function () {
         var _a;
-        return "".concat(this.installationPath, "/migrations/").concat((_a = this.getPostgresInstance().gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name);
+        return (((_a = this.getPostgresInstance().gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name) ||
+            null);
     };
     PluginInstance.prototype.getContainerController = function () {
         return this.containerController;
@@ -86,6 +91,20 @@ var PluginInstance = (function () {
     };
     PluginInstance.prototype.getGraphqlURL = function () {
         return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().getPortNumber(), "/v1/graphql");
+    };
+    PluginInstance.prototype.getMetdataURL = function () {
+        return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().getPortNumber(), "/v1/metadata");
+    };
+    PluginInstance.prototype.getSecret = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.getContainerController().getEnv()];
+                    case 1: return [2, (_a.sent())
+                            .HASURA_GRAPHQL_ADMIN_SECRET || null];
+                }
+            });
+        });
     };
     PluginInstance.prototype.applyMigration = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -159,6 +178,22 @@ var PluginInstance = (function () {
                             return reject(e);
                         });
                     })];
+            });
+        });
+    };
+    PluginInstance.prototype.requestMetadata = function (body) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _a = postMetataData_1.postMetataData;
+                        _b = [this.getMetdataURL(),
+                            body];
+                        return [4, this.getSecret()];
+                    case 1: return [4, _a.apply(void 0, _b.concat([_c.sent()]))];
+                    case 2: return [2, _c.sent()];
+                }
             });
         });
     };

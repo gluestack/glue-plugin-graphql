@@ -14,6 +14,7 @@ async function installScript(graphqlPluginInstance: PluginInstance) {
     `http://localhost:${containerController.getPortNumber()}`,
     "--admin-secret",
     env.HASURA_GRAPHQL_ADMIN_SECRET,
+    "--skip-update-check",
   ];
 }
 

@@ -27,7 +27,10 @@ export class PluginInstanceContainerController implements IContainerController {
   containerId: string;
   callerInstance: IInstance & IHasPostgresInstance & IHasContainerController;
 
-  constructor(app: IApp, callerInstance: IInstance & IHasPostgresInstance & IHasContainerController) {
+  constructor(
+    app: IApp,
+    callerInstance: IInstance & IHasPostgresInstance & IHasContainerController,
+  ) {
     this.app = app;
     this.callerInstance = callerInstance;
     this.setStatus(this.callerInstance.gluePluginStore.get("status"));
@@ -51,26 +54,27 @@ export class PluginInstanceContainerController implements IContainerController {
   }
 
   async getEnv() {
-    if (!this.callerInstance.getPostgresInstance()) {
-      throw new Error("Postgres instance not found");
-    }
-    if (!this.callerInstance.getPostgresInstance().getConnectionString()) {
-      throw new Error("Postgres instance not started");
-    }
-
     const env: any = {};
     for (const key in defaultEnv) {
       env[key] = await this.getFromGlobalEnv(key, defaultEnv[key]);
     }
-    return {
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: this.callerInstance
-        .getPostgresInstance()
-        .getConnectionString(),
-      PG_DATABASE_URL: this.callerInstance
-        .getPostgresInstance()
-        .getConnectionString(),
-      ...env,
+
+    const dbEnv: any = {
+      HASURA_GRAPHQL_METADATA_DATABASE_URL:
+        this.callerInstance?.getPostgresInstance()?.getConnectionString() ||
+        null,
+      PG_DATABASE_URL:
+        this.callerInstance?.getPostgresInstance()?.getConnectionString() ||
+        null,
     };
+    for (const key in dbEnv) {
+      env[key] = await this.getFromGlobalEnv(key, dbEnv[key]);
+    }
+    if (!env.PG_DATABASE_URL) {
+      throw new Error("Postgres instance not set");
+    }
+
+    return env;
   }
 
   getIpAddress() {

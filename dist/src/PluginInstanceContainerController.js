@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -93,43 +82,65 @@ var PluginInstanceContainerController = (function () {
         });
     };
     PluginInstanceContainerController.prototype.getEnv = function () {
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function () {
-            var env, _a, _b, _c, _i, key, _d, _e;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
+            var env, _e, _f, _g, _i, key, _h, _j, dbEnv, _k, _l, _m, _o, key, _p, _q;
+            return __generator(this, function (_r) {
+                switch (_r.label) {
                     case 0:
-                        if (!this.callerInstance.getPostgresInstance()) {
-                            throw new Error("Postgres instance not found");
-                        }
-                        if (!this.callerInstance.getPostgresInstance().getConnectionString()) {
-                            throw new Error("Postgres instance not started");
-                        }
                         env = {};
-                        _a = defaultEnv;
-                        _b = [];
-                        for (_c in _a)
-                            _b.push(_c);
+                        _e = defaultEnv;
+                        _f = [];
+                        for (_g in _e)
+                            _f.push(_g);
                         _i = 0;
-                        _f.label = 1;
+                        _r.label = 1;
                     case 1:
-                        if (!(_i < _b.length)) return [3, 4];
-                        _c = _b[_i];
-                        if (!(_c in _a)) return [3, 3];
-                        key = _c;
-                        _d = env;
-                        _e = key;
+                        if (!(_i < _f.length)) return [3, 4];
+                        _g = _f[_i];
+                        if (!(_g in _e)) return [3, 3];
+                        key = _g;
+                        _h = env;
+                        _j = key;
                         return [4, this.getFromGlobalEnv(key, defaultEnv[key])];
                     case 2:
-                        _d[_e] = _f.sent();
-                        _f.label = 3;
+                        _h[_j] = _r.sent();
+                        _r.label = 3;
                     case 3:
                         _i++;
                         return [3, 1];
-                    case 4: return [2, __assign({ HASURA_GRAPHQL_METADATA_DATABASE_URL: this.callerInstance
-                                .getPostgresInstance()
-                                .getConnectionString(), PG_DATABASE_URL: this.callerInstance
-                                .getPostgresInstance()
-                                .getConnectionString() }, env)];
+                    case 4:
+                        dbEnv = {
+                            HASURA_GRAPHQL_METADATA_DATABASE_URL: ((_b = (_a = this.callerInstance) === null || _a === void 0 ? void 0 : _a.getPostgresInstance()) === null || _b === void 0 ? void 0 : _b.getConnectionString()) ||
+                                null,
+                            PG_DATABASE_URL: ((_d = (_c = this.callerInstance) === null || _c === void 0 ? void 0 : _c.getPostgresInstance()) === null || _d === void 0 ? void 0 : _d.getConnectionString()) ||
+                                null
+                        };
+                        _k = dbEnv;
+                        _l = [];
+                        for (_m in _k)
+                            _l.push(_m);
+                        _o = 0;
+                        _r.label = 5;
+                    case 5:
+                        if (!(_o < _l.length)) return [3, 8];
+                        _m = _l[_o];
+                        if (!(_m in _k)) return [3, 7];
+                        key = _m;
+                        _p = env;
+                        _q = key;
+                        return [4, this.getFromGlobalEnv(key, dbEnv[key])];
+                    case 6:
+                        _p[_q] = _r.sent();
+                        _r.label = 7;
+                    case 7:
+                        _o++;
+                        return [3, 5];
+                    case 8:
+                        if (!env.PG_DATABASE_URL) {
+                            throw new Error("Postgres instance not set");
+                        }
+                        return [2, env];
                 }
             });
         });

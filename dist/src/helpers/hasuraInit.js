@@ -57,6 +57,7 @@ function installScript(graphqlPluginInstance) {
                             "http://localhost:".concat(containerController.getPortNumber()),
                             "--admin-secret",
                             env.HASURA_GRAPHQL_ADMIN_SECRET,
+                            "--skip-update-check",
                         ]];
             }
         });

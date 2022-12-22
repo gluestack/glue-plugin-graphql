@@ -9,6 +9,7 @@ import { PluginInstanceContainerController } from "./PluginInstanceContainerCont
 import { IHasPostgresInstance } from "./interfaces/IHasPostgresInstance";
 import { IPostgres } from "@gluestack/glue-plugin-postgres/src/interfaces/IPostgres";
 import { hasuraCommand } from "./helpers/hasuraCommand";
+import { postMetataData } from "./helpers/postMetataData";
 
 export class PluginInstance
   implements
@@ -61,9 +62,14 @@ export class PluginInstance
   }
 
   getMigrationFolderPath(): string {
-    return `${this.installationPath}/migrations/${
-      this.getPostgresInstance().gluePluginStore.get("db_config")?.db_name
-    }`;
+    return `${this.installationPath}/migrations/${this.getDbName()}`;
+  }
+
+  getDbName(): string {
+    return (
+      this.getPostgresInstance().gluePluginStore.get("db_config")?.db_name ||
+      null
+    );
   }
 
   getContainerController(): PluginInstanceContainerController {
@@ -90,6 +96,15 @@ export class PluginInstance
 
   getGraphqlURL(): string {
     return `http://${this.getContainerController().getIpAddress()}:${this.getContainerController().getPortNumber()}/v1/graphql`;
+  }
+
+  getMetdataURL(): string {
+    return `http://${this.getContainerController().getIpAddress()}:${this.getContainerController().getPortNumber()}/v1/metadata`;
+  }
+
+  async getSecret() {
+    return (await this.getContainerController().getEnv())
+      .HASURA_GRAPHQL_ADMIN_SECRET || null;
   }
 
   async applyMigration() {
@@ -156,5 +171,13 @@ export class PluginInstance
           return reject(e);
         });
     });
+  }
+
+  async requestMetadata(body: any) {
+    return await postMetataData(
+      this.getMetdataURL(),
+      body,
+      await this.getSecret(),
+    );
   }
 }
