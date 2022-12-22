@@ -3,12 +3,12 @@ import IPlugin from "@gluestack/framework/types/plugin/interface/IPlugin";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 import ILifeCycle from "@gluestack/framework/types/plugin/interface/ILifeCycle";
 import IGlueStorePlugin from "@gluestack/framework/types/store/interface/IGluePluginStore";
-import IContainerController from "@gluestack/framework/types/plugin/interface/IContainerController";
 import IHasContainerController from "@gluestack/framework/types/plugin/interface/IHasContainerController";
 import IManagesInstances from "@gluestack/framework/types/plugin/interface/IManagesInstances";
 import { PluginInstanceContainerController } from "./PluginInstanceContainerController";
 import { IHasPostgresInstance } from "./interfaces/IHasPostgresInstance";
 import { IPostgres } from "@gluestack/glue-plugin-postgres/src/interfaces/IPostgres";
+import { hasuraCommand } from "./helpers/hasuraCommand";
 
 export class PluginInstance
   implements
@@ -20,7 +20,7 @@ export class PluginInstance
   app: IApp;
   name: string;
   callerPlugin: IPlugin;
-  containerController: IContainerController;
+  containerController: PluginInstanceContainerController;
   isOfTypeInstance: boolean = false;
   gluePluginStore: IGlueStorePlugin;
   installationPath: string;
@@ -60,7 +60,13 @@ export class PluginInstance
     return this.installationPath;
   }
 
-  getContainerController(): IContainerController {
+  getMigrationFolderPath(): string {
+    return `${this.installationPath}/migrations/${
+      this.getPostgresInstance().gluePluginStore.get("db_config")?.db_name
+    }`;
+  }
+
+  getContainerController(): PluginInstanceContainerController {
     return this.containerController;
   }
 
@@ -80,5 +86,75 @@ export class PluginInstance
       }
       return postgresInstance;
     }
+  }
+
+  getGraphqlURL(): string {
+    return `http://${this.getContainerController().getIpAddress()}:${this.getContainerController().getPortNumber()}/v1/graphql`;
+  }
+
+  async applyMigration() {
+    return new Promise((resolve, reject) => {
+      this.metadataApply()
+        .then(() => {
+          this.migrateApply()
+            .then(() => {
+              this.metadataClear()
+                .then(() => {
+                  this.metadataApply()
+                    .then(() => {
+                      return resolve(true);
+                    })
+                    .catch((e: any) => {
+                      return reject(e);
+                    });
+                })
+                .catch((e: any) => {
+                  return reject(e);
+                });
+            })
+            .catch((e: any) => {
+              return reject(e);
+            });
+        })
+        .catch((e: any) => {
+          return reject(e);
+        });
+    });
+  }
+
+  async metadataApply() {
+    return new Promise((resolve, reject) => {
+      hasuraCommand(this, "metadataApply")
+        .then(() => {
+          return resolve(true);
+        })
+        .catch((e: any) => {
+          return reject(e);
+        });
+    });
+  }
+
+  async migrateApply() {
+    return new Promise((resolve, reject) => {
+      hasuraCommand(this, "migrateApply")
+        .then(() => {
+          return resolve(true);
+        })
+        .catch((e: any) => {
+          return reject(e);
+        });
+    });
+  }
+
+  async metadataClear() {
+    return new Promise((resolve, reject) => {
+      hasuraCommand(this, "metadataClear")
+        .then(() => {
+          return resolve(true);
+        })
+        .catch((e: any) => {
+          return reject(e);
+        });
+    });
   }
 }

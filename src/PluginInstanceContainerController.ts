@@ -3,6 +3,8 @@ import IApp from "@gluestack/framework/types/app/interface/IApp";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 import IContainerController from "@gluestack/framework/types/plugin/interface/IContainerController";
 import { IHasPostgresInstance } from "./interfaces/IHasPostgresInstance";
+import { hasuraCommand } from "./helpers/hasuraCommand";
+import IHasContainerController from "@gluestack/framework/types/plugin/interface/IHasContainerController";
 const { GlobalEnv } = require("@gluestack/helpers");
 
 const defaultEnv: any = {
@@ -23,9 +25,9 @@ export class PluginInstanceContainerController implements IContainerController {
   status: "up" | "down" = "down";
   portNumber: number;
   containerId: string;
-  callerInstance: IInstance & IHasPostgresInstance;
+  callerInstance: IInstance & IHasPostgresInstance & IHasContainerController;
 
-  constructor(app: IApp, callerInstance: IInstance & IHasPostgresInstance) {
+  constructor(app: IApp, callerInstance: IInstance & IHasPostgresInstance & IHasContainerController) {
     this.app = app;
     this.callerInstance = callerInstance;
     this.setStatus(this.callerInstance.gluePluginStore.get("status"));
@@ -69,6 +71,10 @@ export class PluginInstanceContainerController implements IContainerController {
         .getConnectionString(),
       ...env,
     };
+  }
+
+  getIpAddress() {
+    return "localhost";
   }
 
   getDockerJson() {
@@ -161,7 +167,6 @@ export class PluginInstanceContainerController implements IContainerController {
 
     await new Promise(async (resolve, reject) => {
       DockerodeHelper.getPort(this.getPortNumber(true), ports)
-
         .then(async (port: number) => {
           this.portNumber = port;
           DockerodeHelper.up(
@@ -188,7 +193,13 @@ export class PluginInstanceContainerController implements IContainerController {
                   "ports",
                   ports,
                 );
-                return resolve(true);
+                hasuraCommand(this.callerInstance, "version")
+                  .then(() => {
+                    return resolve(true);
+                  })
+                  .catch((e: any) => {
+                    return resolve(true);
+                  });
               },
             )
             .catch((e: any) => {

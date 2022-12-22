@@ -49,6 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.PluginInstanceContainerController = void 0;
 var DockerodeHelper = require("@gluestack/helpers").DockerodeHelper;
+var hasuraCommand_1 = require("./helpers/hasuraCommand");
 var GlobalEnv = require("@gluestack/helpers").GlobalEnv;
 var defaultEnv = {
     HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
@@ -132,6 +133,9 @@ var PluginInstanceContainerController = (function () {
                 }
             });
         });
+    };
+    PluginInstanceContainerController.prototype.getIpAddress = function () {
+        return "localhost";
     };
     PluginInstanceContainerController.prototype.getDockerJson = function () {
         return {
@@ -229,7 +233,12 @@ var PluginInstanceContainerController = (function () {
                                                         _this.setContainerId(containerId);
                                                         ports.push(portNumber);
                                                         _this.callerInstance.callerPlugin.gluePluginStore.set("ports", ports);
-                                                        return resolve(true);
+                                                        (0, hasuraCommand_1.hasuraCommand)(_this.callerInstance, "version")
+                                                            .then(function () {
+                                                            return resolve(true);
+                                                        })["catch"](function (e) {
+                                                            return resolve(true);
+                                                        });
                                                     })["catch"](function (e) {
                                                         return reject(e);
                                                     });

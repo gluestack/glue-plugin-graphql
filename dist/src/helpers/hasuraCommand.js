@@ -36,58 +36,78 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.hasuraInit = void 0;
+exports.hasuraCommand = void 0;
 var SpawnHelper = require("@gluestack/helpers").SpawnHelper;
-var isEndpointUp_1 = require("./isEndpointUp");
-function installScript(graphqlPluginInstance) {
+function script(pluginInstance, command) {
+    var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var containerController, env;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var containerController, env, commands;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    containerController = graphqlPluginInstance.getContainerController();
+                    containerController = pluginInstance.getContainerController();
                     return [4, containerController.getEnv()];
                 case 1:
-                    env = _a.sent();
-                    return [2, [
+                    env = _b.sent();
+                    commands = {
+                        version: ["hasura", "version", "--skip-update-check"],
+                        metadataApply: [
                             "hasura",
-                            "init",
-                            ".",
+                            "metadata",
+                            "apply",
                             "--endpoint",
                             "http://localhost:".concat(containerController.getPortNumber()),
                             "--admin-secret",
                             env.HASURA_GRAPHQL_ADMIN_SECRET,
-                        ]];
+                            "--skip-update-check",
+                        ],
+                        migrateApply: [
+                            "hasura",
+                            "migrate",
+                            "apply",
+                            "--endpoint",
+                            "http://localhost:".concat(containerController.getPortNumber()),
+                            "--admin-secret",
+                            env.HASURA_GRAPHQL_ADMIN_SECRET,
+                            "--database-name",
+                            (_a = pluginInstance.getPostgresInstance().gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name,
+                            "--skip-update-check",
+                        ],
+                        metadataClear: [
+                            "hasura",
+                            "metadata",
+                            "clear",
+                            "--endpoint",
+                            "http://localhost:".concat(containerController.getPortNumber()),
+                            "--admin-secret",
+                            env.HASURA_GRAPHQL_ADMIN_SECRET,
+                            "--skip-update-check",
+                        ]
+                    };
+                    return [2, commands[command] || []];
             }
         });
     });
 }
-function hasuraInit(graphqlPluginInstance) {
-    var _this = this;
-    var containerController = graphqlPluginInstance.getContainerController();
-    return new Promise(function (resolve, reject) {
-        containerController
-            .up()
-            .then(function () { return __awaiter(_this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                (0, isEndpointUp_1.isEndpointUp)("http://localhost:".concat(containerController
-                    .getPortNumber(), "/v1/version"))
-                    .then(function () { return __awaiter(_this, void 0, void 0, function () {
+function hasuraCommand(pluginInstance, command) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
+        return __generator(this, function (_a) {
+            return [2, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
                     var _a, _b, _c, _d, _e, _f, _g;
                     return __generator(this, function (_h) {
                         switch (_h.label) {
                             case 0:
                                 console.log("\x1b[33m");
                                 _b = (_a = console).log;
-                                _d = (_c = "".concat(graphqlPluginInstance.getName(), ": Running `")).concat;
-                                return [4, installScript(graphqlPluginInstance)];
+                                _d = (_c = "".concat(pluginInstance.getName(), ": Running `")).concat;
+                                return [4, script(pluginInstance, command)];
                             case 1:
                                 _b.apply(_a, [_d.apply(_c, [(_h.sent()).join(" "), "`"])]);
                                 console.log("\x1b[0m");
                                 _f = (_e = SpawnHelper).run;
-                                _g = [graphqlPluginInstance.getInstallationPath()];
-                                return [4, installScript(graphqlPluginInstance)];
+                                _g = [pluginInstance.getInstallationPath()];
+                                return [4, script(pluginInstance, command)];
                             case 2:
                                 _f.apply(_e, _g.concat([_h.sent()]))
                                     .then(function (resp) {
@@ -98,15 +118,9 @@ function hasuraInit(graphqlPluginInstance) {
                                 return [2];
                         }
                     });
-                }); })["catch"](function (e) {
-                    return reject(e);
-                });
-                return [2];
-            });
-        }); })["catch"](function (e) {
-            return reject(e);
+                }); })];
         });
     });
 }
-exports.hasuraInit = hasuraInit;
-//# sourceMappingURL=hasuraInit.js.map
+exports.hasuraCommand = hasuraCommand;
+//# sourceMappingURL=hasuraCommand.js.map
