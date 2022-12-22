@@ -36,49 +36,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.isEndpointUp = void 0;
-var http = require("http");
-function checkEndpoint(endpoint) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2, new Promise(function (resolve, reject) {
-                    http
-                        .get(endpoint, function (res) {
-                        resolve("".concat(endpoint, " is up"));
-                    })
-                        .on("error", function (error) {
-                        reject("".concat(endpoint, " is down: ").concat(error.message));
-                    });
-                })];
-        });
+exports.generateDockerfile = void 0;
+var path_1 = require("path");
+var fs_1 = require("fs");
+var generateDockerfile = function (installationPath) { return __awaiter(void 0, void 0, void 0, function () {
+    var filepath, dockerfile;
+    return __generator(this, function (_a) {
+        filepath = (0, path_1.join)(process.cwd(), installationPath);
+        dockerfile = [];
+        dockerfile.push("FROM hasura/graphql-engine");
+        dockerfile.push("COPY . .");
+        dockerfile.push("EXPOSE 8080");
+        dockerfile.push('CMD [ "graphql-engine", "serve" ]');
+        (0, fs_1.writeFileSync)((0, path_1.join)(filepath, "Dockerfile"), dockerfile.join("\n"));
+        return [2];
     });
-}
-function isEndpointUp(endpoint) {
-    return __awaiter(this, void 0, void 0, function () {
-        var count;
-        var _this = this;
-        return __generator(this, function (_a) {
-            count = 0;
-            return [2, new Promise(function (resolve, reject) {
-                    var interval = setInterval(function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            console.log("Validating endpoint: ".concat(endpoint, ", retries: ").concat(count + 1));
-                            checkEndpoint(endpoint)
-                                .then(function (res) {
-                                clearInterval(interval);
-                                resolve(true);
-                            })["catch"](function (e) {
-                            });
-                            if (count > 10) {
-                                return [2, reject("Endpoint: ".concat(endpoint, " is not up"))];
-                            }
-                            ++count;
-                            return [2];
-                        });
-                    }); }, 5000);
-                })];
-        });
-    });
-}
-exports.isEndpointUp = isEndpointUp;
-//# sourceMappingURL=isEndpointUp.js.map
+}); };
+exports.generateDockerfile = generateDockerfile;
+//# sourceMappingURL=create-dockerfile.js.map

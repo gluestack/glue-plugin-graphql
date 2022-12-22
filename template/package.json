@@ -1,0 +1,11 @@
+{
+  "name": "hasura",
+  "description": "",
+  "scripts": {
+    "sync:hasura": "npm run apply:metadata && npm run apply:migrate && npm run clear:metadata && npm run apply:metadata",
+    "apply:metadata": "hasura metadata apply --envfile .env --skip-update-check",
+    "apply:migrate": "hasura migrate apply --envfile .env --skip-update-check",
+    "clear:metadata": "hasura metadata clear --envfile .env --skip-update-check",
+    "status:migrate": "hasura migrate status --envfile .env --skip-update-check"
+  }
+}

@@ -39,6 +39,7 @@ exports.__esModule = true;
 exports.PluginInstanceContainerController = void 0;
 var DockerodeHelper = require("@gluestack/helpers").DockerodeHelper;
 var hasuraCommand_1 = require("./helpers/hasuraCommand");
+var create_dockerfile_1 = require("./create-dockerfile");
 var GlobalEnv = require("@gluestack/helpers").GlobalEnv;
 var defaultEnv = {
     HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
@@ -165,7 +166,8 @@ var PluginInstanceContainerController = (function () {
                 "8080/tcp": {}
             },
             RestartPolicy: {
-                Name: "always"
+                Name: "on-failure",
+                MaximumRetryCount: 10
             }
         };
     };
@@ -199,7 +201,6 @@ var PluginInstanceContainerController = (function () {
     PluginInstanceContainerController.prototype.up = function () {
         var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
-            var ports;
             var _this = this;
             return __generator(this, function (_f) {
                 switch (_f.label) {
@@ -219,46 +220,59 @@ var PluginInstanceContainerController = (function () {
                         _f.sent();
                         _f.label = 2;
                     case 2:
-                        ports = this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
+                        console.log("\x1b[32m");
+                        console.log("Initializing graphql endpoint...");
+                        console.log("\x1b[0m");
                         return [4, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
                                 var _this = this;
                                 return __generator(this, function (_a) {
-                                    DockerodeHelper.getPort(this.getPortNumber(true), ports)
-                                        .then(function (port) { return __awaiter(_this, void 0, void 0, function () {
-                                        var _a, _b, _c;
+                                    setTimeout(function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var ports;
                                         var _this = this;
-                                        return __generator(this, function (_d) {
-                                            switch (_d.label) {
-                                                case 0:
-                                                    this.portNumber = port;
-                                                    _b = (_a = DockerodeHelper).up;
-                                                    _c = [this.getDockerJson()];
-                                                    return [4, this.getEnv()];
-                                                case 1:
-                                                    _b.apply(_a, _c.concat([_d.sent(), this.portNumber,
-                                                        this.callerInstance.getName()]))
-                                                        .then(function (_a) {
-                                                        var status = _a.status, portNumber = _a.portNumber, containerId = _a.containerId;
-                                                        _this.setStatus(status);
-                                                        _this.setPortNumber(portNumber);
-                                                        _this.setContainerId(containerId);
-                                                        ports.push(portNumber);
-                                                        _this.callerInstance.callerPlugin.gluePluginStore.set("ports", ports);
-                                                        (0, hasuraCommand_1.hasuraCommand)(_this.callerInstance, "version")
-                                                            .then(function () {
-                                                            return resolve(true);
-                                                        })["catch"](function (e) {
-                                                            return resolve(true);
-                                                        });
-                                                    })["catch"](function (e) {
-                                                        return reject(e);
-                                                    });
-                                                    return [2];
-                                            }
+                                        return __generator(this, function (_a) {
+                                            ports = this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
+                                            DockerodeHelper.getPort(this.getPortNumber(true), ports)
+                                                .then(function (port) { return __awaiter(_this, void 0, void 0, function () {
+                                                var _a, _b, _c;
+                                                var _this = this;
+                                                return __generator(this, function (_d) {
+                                                    switch (_d.label) {
+                                                        case 0:
+                                                            this.portNumber = port;
+                                                            _b = (_a = DockerodeHelper).up;
+                                                            _c = [this.getDockerJson()];
+                                                            return [4, this.getEnv()];
+                                                        case 1:
+                                                            _b.apply(_a, _c.concat([_d.sent(), this.portNumber,
+                                                                this.callerInstance.getName()]))
+                                                                .then(function (_a) {
+                                                                var status = _a.status, portNumber = _a.portNumber, containerId = _a.containerId;
+                                                                _this.setStatus(status);
+                                                                _this.setPortNumber(portNumber);
+                                                                _this.setContainerId(containerId);
+                                                                ports.push(portNumber);
+                                                                _this.callerInstance.callerPlugin.gluePluginStore.set("ports", ports);
+                                                                (0, hasuraCommand_1.hasuraCommand)(_this.callerInstance, "version")
+                                                                    .then(function () {
+                                                                    console.log("\x1b[35m");
+                                                                    console.log("You can now use these endpoint for graphql: ".concat(_this.callerInstance.getGraphqlURL()));
+                                                                    console.log("\x1b[0m");
+                                                                    return resolve(true);
+                                                                })["catch"](function (e) {
+                                                                    return resolve(true);
+                                                                });
+                                                            })["catch"](function (e) {
+                                                                return reject(e);
+                                                            });
+                                                            return [2];
+                                                    }
+                                                });
+                                            }); })["catch"](function (e) {
+                                                return reject(e);
+                                            });
+                                            return [2];
                                         });
-                                    }); })["catch"](function (e) {
-                                        return reject(e);
-                                    });
+                                    }); }, 30 * 1000);
                                     return [2];
                                 });
                             }); })];
@@ -305,9 +319,16 @@ var PluginInstanceContainerController = (function () {
         });
     };
     PluginInstanceContainerController.prototype.build = function () {
-        return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-            return [2];
-        }); });
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, (0, create_dockerfile_1.generateDockerfile)(this.callerInstance.getInstallationPath())];
+                    case 1:
+                        _a.sent();
+                        return [2];
+                }
+            });
+        });
     };
     return PluginInstanceContainerController;
 }());

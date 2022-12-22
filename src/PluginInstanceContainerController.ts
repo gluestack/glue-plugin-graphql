@@ -5,6 +5,8 @@ import IContainerController from "@gluestack/framework/types/plugin/interface/IC
 import { IHasPostgresInstance } from "./interfaces/IHasPostgresInstance";
 import { hasuraCommand } from "./helpers/hasuraCommand";
 import IHasContainerController from "@gluestack/framework/types/plugin/interface/IHasContainerController";
+import { PluginInstance } from "./PluginInstance";
+import { generateDockerfile } from "./create-dockerfile";
 const { GlobalEnv } = require("@gluestack/helpers");
 
 const defaultEnv: any = {
@@ -25,12 +27,9 @@ export class PluginInstanceContainerController implements IContainerController {
   status: "up" | "down" = "down";
   portNumber: number;
   containerId: string;
-  callerInstance: IInstance & IHasPostgresInstance & IHasContainerController;
+  callerInstance: PluginInstance;
 
-  constructor(
-    app: IApp,
-    callerInstance: IInstance & IHasPostgresInstance & IHasContainerController,
-  ) {
+  constructor(app: IApp, callerInstance: PluginInstance) {
     this.app = app;
     this.callerInstance = callerInstance;
     this.setStatus(this.callerInstance.gluePluginStore.get("status"));
@@ -166,53 +165,64 @@ export class PluginInstanceContainerController implements IContainerController {
         ?.up();
     }
 
-    let ports =
-      this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
+    console.log("\x1b[32m");
+    console.log(`Initializing graphql endpoint...`);
+    console.log("\x1b[0m");
 
     await new Promise(async (resolve, reject) => {
-      DockerodeHelper.getPort(this.getPortNumber(true), ports)
-        .then(async (port: number) => {
-          this.portNumber = port;
-          DockerodeHelper.up(
-            this.getDockerJson(),
-            await this.getEnv(),
-            this.portNumber,
-            this.callerInstance.getName(),
-          )
-            .then(
-              ({
-                status,
-                portNumber,
-                containerId,
-              }: {
-                status: "up" | "down";
-                portNumber: number;
-                containerId: string;
-              }) => {
-                this.setStatus(status);
-                this.setPortNumber(portNumber);
-                this.setContainerId(containerId);
-                ports.push(portNumber);
-                this.callerInstance.callerPlugin.gluePluginStore.set(
-                  "ports",
-                  ports,
-                );
-                hasuraCommand(this.callerInstance, "version")
-                  .then(() => {
-                    return resolve(true);
-                  })
-                  .catch((e: any) => {
-                    return resolve(true);
-                  });
-              },
+      setTimeout(async () => {
+        let ports =
+          this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
+        DockerodeHelper.getPort(this.getPortNumber(true), ports)
+          .then(async (port: number) => {
+            this.portNumber = port;
+            DockerodeHelper.up(
+              this.getDockerJson(),
+              await this.getEnv(),
+              this.portNumber,
+              this.callerInstance.getName(),
             )
-            .catch((e: any) => {
-              return reject(e);
-            });
-        })
-        .catch((e: any) => {
-          return reject(e);
-        });
+              .then(
+                ({
+                  status,
+                  portNumber,
+                  containerId,
+                }: {
+                  status: "up" | "down";
+                  portNumber: number;
+                  containerId: string;
+                }) => {
+                  this.setStatus(status);
+                  this.setPortNumber(portNumber);
+                  this.setContainerId(containerId);
+                  ports.push(portNumber);
+                  this.callerInstance.callerPlugin.gluePluginStore.set(
+                    "ports",
+                    ports,
+                  );
+                  hasuraCommand(this.callerInstance, "version")
+                    .then(() => {
+                      console.log("\x1b[35m");
+                      console.log(
+                        `You can now use these endpoint for graphql: ${this.callerInstance.getGraphqlURL()}`,
+                      );
+                      console.log("\x1b[0m");
+
+                      return resolve(true);
+                    })
+                    .catch((e: any) => {
+                      return resolve(true);
+                    });
+                },
+              )
+              .catch((e: any) => {
+                return reject(e);
+              });
+          })
+          .catch((e: any) => {
+            return reject(e);
+          });
+      }, 30 * 1000);
     });
   }
 
@@ -239,5 +249,7 @@ export class PluginInstanceContainerController implements IContainerController {
     });
   }
 
-  async build() {}
+  async build() {
+    await generateDockerfile(this.callerInstance.getInstallationPath());
+  }
 }

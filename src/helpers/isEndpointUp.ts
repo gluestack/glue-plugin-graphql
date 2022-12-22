@@ -17,6 +17,8 @@ export async function isEndpointUp(endpoint: string) {
 
   return new Promise((resolve, reject) => {
     let interval = setInterval(async () => {
+      console.log(`Validating endpoint: ${endpoint}, retries: ${count + 1}`);
+
       checkEndpoint(endpoint)
         .then((res: any) => {
           clearInterval(interval);
