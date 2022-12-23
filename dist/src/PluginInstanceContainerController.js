@@ -250,6 +250,7 @@ var PluginInstanceContainerController = (function () {
                                 .getPostgresInstance()) === null || _d === void 0 ? void 0 : _d.getContainerController()) === null || _e === void 0 ? void 0 : _e.up())];
                     case 2:
                         _f.sent();
+                        this.callerInstance.gluePluginStore.set("postgres_booted", false);
                         _f.label = 3;
                     case 3:
                         if (!this.callerInstance.gluePluginStore.get("postgres_booted")) {

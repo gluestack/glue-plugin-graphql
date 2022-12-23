@@ -182,6 +182,7 @@ export class PluginInstanceContainerController
         .getPostgresInstance()
         ?.getContainerController()
         ?.up();
+      this.callerInstance.gluePluginStore.set("postgres_booted", false);
     }
 
     if (!this.callerInstance.gluePluginStore.get("postgres_booted")) {
