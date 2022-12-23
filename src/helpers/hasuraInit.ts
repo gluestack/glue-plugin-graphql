@@ -11,7 +11,7 @@ async function installScript(graphqlPluginInstance: PluginInstance) {
     "init",
     ".",
     "--endpoint",
-    `http://localhost:${containerController.getPortNumber()}`,
+    `http://localhost:${await containerController.getPortNumber()}`,
     "--admin-secret",
     env.HASURA_GRAPHQL_ADMIN_SECRET,
     "--skip-update-check",
@@ -26,8 +26,7 @@ export function hasuraInit(graphqlPluginInstance: PluginInstance) {
       .up()
       .then(async () => {
         isEndpointUp(
-          `http://localhost:${containerController
-            .getPortNumber()}/v1/version`,
+          `http://localhost:${await containerController.getPortNumber()}/v1/version`,
         )
           .then(async () => {
             console.log("\x1b[33m");

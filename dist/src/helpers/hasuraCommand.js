@@ -41,49 +41,60 @@ var SpawnHelper = require("@gluestack/helpers").SpawnHelper;
 function script(pluginInstance, command) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var containerController, env, commands;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var containerController, env, commands, _b, _c, _d, _e, _f, _g;
+        var _h;
+        return __generator(this, function (_j) {
+            switch (_j.label) {
                 case 0:
                     containerController = pluginInstance.getContainerController();
                     return [4, containerController.getEnv()];
                 case 1:
-                    env = _b.sent();
-                    commands = {
-                        version: ["hasura", "version", "--skip-update-check"],
-                        metadataApply: [
-                            "hasura",
-                            "metadata",
-                            "apply",
-                            "--endpoint",
-                            "http://localhost:".concat(containerController.getPortNumber()),
-                            "--admin-secret",
-                            env.HASURA_GRAPHQL_ADMIN_SECRET,
-                            "--skip-update-check",
-                        ],
-                        migrateApply: [
-                            "hasura",
-                            "migrate",
-                            "apply",
-                            "--endpoint",
-                            "http://localhost:".concat(containerController.getPortNumber()),
-                            "--admin-secret",
-                            env.HASURA_GRAPHQL_ADMIN_SECRET,
-                            "--database-name",
-                            (_a = pluginInstance.getPostgresInstance().gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name,
-                            "--skip-update-check",
-                        ],
-                        metadataClear: [
-                            "hasura",
-                            "metadata",
-                            "clear",
-                            "--endpoint",
-                            "http://localhost:".concat(containerController.getPortNumber()),
-                            "--admin-secret",
-                            env.HASURA_GRAPHQL_ADMIN_SECRET,
-                            "--skip-update-check",
-                        ]
+                    env = _j.sent();
+                    _h = {
+                        version: ["hasura", "version", "--skip-update-check"]
                     };
+                    _b = ["hasura",
+                        "metadata",
+                        "apply",
+                        "--endpoint"];
+                    _c = "http://localhost:".concat;
+                    return [4, containerController.getPortNumber()];
+                case 2:
+                    _h.metadataApply = _b.concat([
+                        _c.apply("http://localhost:", [_j.sent()]),
+                        "--admin-secret",
+                        env.HASURA_GRAPHQL_ADMIN_SECRET,
+                        "--skip-update-check"
+                    ]);
+                    _d = ["hasura",
+                        "migrate",
+                        "apply",
+                        "--endpoint"];
+                    _e = "http://localhost:".concat;
+                    return [4, containerController.getPortNumber()];
+                case 3:
+                    _h.migrateApply = _d.concat([
+                        _e.apply("http://localhost:", [_j.sent()]),
+                        "--admin-secret",
+                        env.HASURA_GRAPHQL_ADMIN_SECRET,
+                        "--database-name",
+                        (_a = pluginInstance.getPostgresInstance().gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name,
+                        "--skip-update-check"
+                    ]);
+                    _f = ["hasura",
+                        "metadata",
+                        "clear",
+                        "--endpoint"];
+                    _g = "http://localhost:".concat;
+                    return [4, containerController.getPortNumber()];
+                case 4:
+                    commands = (_h.metadataClear = _f.concat([
+                        _g.apply("http://localhost:", [_j.sent()]),
+                        "--admin-secret",
+                        env.HASURA_GRAPHQL_ADMIN_SECRET,
+                        "--skip-update-check"
+                    ]),
+                        _h);
                     return [2, commands[command] || []];
             }
         });

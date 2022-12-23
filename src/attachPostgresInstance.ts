@@ -24,7 +24,7 @@ async function selectPostgresInstance(postgresInstances: IInstance[]) {
       title: `${instance.getName()}`,
       description: `Will attach database "${
         instance.gluePluginStore.get("db_config")?.db_name
-      }"`,
+      }" running on port ${instance.getContainerController().portNumber}`,
       value: instance,
     };
   });

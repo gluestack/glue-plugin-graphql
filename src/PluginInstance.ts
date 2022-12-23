@@ -10,6 +10,7 @@ import { IHasPostgresInstance } from "./interfaces/IHasPostgresInstance";
 import { IPostgres } from "@gluestack/glue-plugin-postgres/src/interfaces/IPostgres";
 import { hasuraCommand } from "./helpers/hasuraCommand";
 import { postMetataData } from "./helpers/postMetataData";
+import { IPortNumber } from "./interfaces/IPortNumber";
 
 export class PluginInstance
   implements
@@ -21,7 +22,7 @@ export class PluginInstance
   app: IApp;
   name: string;
   callerPlugin: IPlugin;
-  containerController: PluginInstanceContainerController;
+  containerController: PluginInstanceContainerController & IPortNumber;
   isOfTypeInstance: boolean = false;
   gluePluginStore: IGlueStorePlugin;
   installationPath: string;
@@ -72,7 +73,7 @@ export class PluginInstance
     );
   }
 
-  getContainerController(): PluginInstanceContainerController {
+  getContainerController(): PluginInstanceContainerController & IPortNumber {
     return this.containerController;
   }
 
@@ -95,16 +96,22 @@ export class PluginInstance
   }
 
   getGraphqlURL(): string {
-    return `http://${this.getContainerController().getIpAddress()}:${this.getContainerController().getPortNumber()}/v1/graphql`;
+    return `http://${this.getContainerController().getIpAddress()}:${
+      this.getContainerController().portNumber
+    }/v1/graphql`;
   }
 
   getMetdataURL(): string {
-    return `http://${this.getContainerController().getIpAddress()}:${this.getContainerController().getPortNumber()}/v1/metadata`;
+    return `http://${this.getContainerController().getIpAddress()}:${
+      this.getContainerController().portNumber
+    }/v1/metadata`;
   }
 
   async getSecret() {
-    return (await this.getContainerController().getEnv())
-      .HASURA_GRAPHQL_ADMIN_SECRET || null;
+    return (
+      (await this.getContainerController().getEnv())
+        .HASURA_GRAPHQL_ADMIN_SECRET || null
+    );
   }
 
   async applyMigration() {

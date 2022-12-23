@@ -7,6 +7,7 @@ import { hasuraCommand } from "./helpers/hasuraCommand";
 import IHasContainerController from "@gluestack/framework/types/plugin/interface/IHasContainerController";
 import { PluginInstance } from "./PluginInstance";
 import { generateDockerfile } from "./create-dockerfile";
+import { IPortNumber } from "./interfaces/IPortNumber";
 const { GlobalEnv } = require("@gluestack/helpers");
 
 const defaultEnv: any = {
@@ -22,7 +23,9 @@ const defaultEnv: any = {
   HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous",
 };
 
-export class PluginInstanceContainerController implements IContainerController {
+export class PluginInstanceContainerController
+  implements IContainerController, IPortNumber
+{
   app: IApp;
   status: "up" | "down" = "down";
   portNumber: number;
@@ -60,11 +63,13 @@ export class PluginInstanceContainerController implements IContainerController {
 
     const dbEnv: any = {
       HASURA_GRAPHQL_METADATA_DATABASE_URL:
-        this.callerInstance?.getPostgresInstance()?.getConnectionString() ||
-        null,
+        (await this.callerInstance
+          ?.getPostgresInstance()
+          ?.getConnectionString()) || null,
       PG_DATABASE_URL:
-        this.callerInstance?.getPostgresInstance()?.getConnectionString() ||
-        null,
+        (await this.callerInstance
+          ?.getPostgresInstance()
+          ?.getConnectionString()) || null,
     };
     for (const key in dbEnv) {
       env[key] = await this.getFromGlobalEnv(key, dbEnv[key]);
@@ -80,7 +85,7 @@ export class PluginInstanceContainerController implements IContainerController {
     return "localhost";
   }
 
-  getDockerJson() {
+  async getDockerJson() {
     return {
       Image: "hasura/graphql-engine",
       WorkingDir: "/hasura",
@@ -88,7 +93,7 @@ export class PluginInstanceContainerController implements IContainerController {
         PortBindings: {
           "8080/tcp": [
             {
-              HostPort: this.getPortNumber(true).toString(),
+              HostPort: (await this.getPortNumber()).toString(),
             },
           ],
         },
@@ -106,13 +111,25 @@ export class PluginInstanceContainerController implements IContainerController {
     return this.status;
   }
 
-  getPortNumber(returnDefault?: boolean): number {
-    if (this.portNumber) {
-      return this.portNumber;
-    }
-    if (returnDefault) {
-      return 8080;
-    }
+  //@ts-ignore
+  async getPortNumber(returnDefault?: boolean) {
+    return new Promise((resolve, reject) => {
+      if (this.portNumber) {
+        return resolve(this.portNumber);
+      }
+      let ports =
+        this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
+      DockerodeHelper.getPort(10880, ports)
+        .then((port: number) => {
+          this.setPortNumber(port);
+          ports.push(port);
+          this.callerInstance.callerPlugin.gluePluginStore.set("ports", ports);
+          return resolve(this.portNumber);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
   }
 
   getContainerId(): string {
@@ -146,7 +163,9 @@ export class PluginInstanceContainerController implements IContainerController {
       );
     }
     if (
-      !this.callerInstance.getPostgresInstance().getConnectionString() ||
+      !(await this.callerInstance
+        .getPostgresInstance()
+        .getConnectionString()) ||
       !this.callerInstance.getPostgresInstance()?.getContainerController()
     ) {
       throw new Error(
@@ -165,81 +184,67 @@ export class PluginInstanceContainerController implements IContainerController {
         ?.up();
     }
 
-    console.log("\x1b[32m");
-    console.log(`Initializing graphql endpoint...`);
-    console.log("\x1b[0m");
+    if (!this.callerInstance.gluePluginStore.get("postgres_booted")) {
+      console.log("\x1b[36m");
+      console.log(
+        `Initializing graphql endpoint, waiting for postgres database...`,
+      );
+      console.log("\x1b[0m");
+    }
 
     await new Promise(async (resolve, reject) => {
-      setTimeout(async () => {
-        let ports =
-          this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
-        DockerodeHelper.getPort(this.getPortNumber(true), ports)
-          .then(async (port: number) => {
-            this.portNumber = port;
-            DockerodeHelper.up(
-              this.getDockerJson(),
-              await this.getEnv(),
-              this.portNumber,
-              this.callerInstance.getName(),
+      setTimeout(
+        async () => {
+          DockerodeHelper.up(
+            await this.getDockerJson(),
+            await this.getEnv(),
+            await this.getPortNumber(),
+            this.callerInstance.getName(),
+          )
+            .then(
+              ({
+                status,
+                containerId,
+              }: {
+                status: "up" | "down";
+                containerId: string;
+              }) => {
+                this.setStatus(status);
+                this.setContainerId(containerId);
+                hasuraCommand(this.callerInstance, "version")
+                  .then(() => {
+                    console.log("\x1b[35m");
+                    console.log(
+                      `You can now use these endpoint for graphql: ${this.callerInstance.getGraphqlURL()}`,
+                    );
+                    console.log("\x1b[0m");
+                    this.callerInstance.gluePluginStore.set(
+                      "postgres_booted",
+                      true,
+                    );
+                    return resolve(true);
+                  })
+                  .catch((e: any) => {
+                    return resolve(true);
+                  });
+              },
             )
-              .then(
-                ({
-                  status,
-                  portNumber,
-                  containerId,
-                }: {
-                  status: "up" | "down";
-                  portNumber: number;
-                  containerId: string;
-                }) => {
-                  this.setStatus(status);
-                  this.setPortNumber(portNumber);
-                  this.setContainerId(containerId);
-                  ports.push(portNumber);
-                  this.callerInstance.callerPlugin.gluePluginStore.set(
-                    "ports",
-                    ports,
-                  );
-                  hasuraCommand(this.callerInstance, "version")
-                    .then(() => {
-                      console.log("\x1b[35m");
-                      console.log(
-                        `You can now use these endpoint for graphql: ${this.callerInstance.getGraphqlURL()}`,
-                      );
-                      console.log("\x1b[0m");
-
-                      return resolve(true);
-                    })
-                    .catch((e: any) => {
-                      return resolve(true);
-                    });
-                },
-              )
-              .catch((e: any) => {
-                return reject(e);
-              });
-          })
-          .catch((e: any) => {
-            return reject(e);
-          });
-      }, 30 * 1000);
+            .catch((e: any) => {
+              return reject(e);
+            });
+        },
+        this.callerInstance.gluePluginStore.get("postgres_booted")
+          ? 1000
+          : 30 * 1000,
+      );
     });
   }
 
   async down() {
-    let ports =
-      this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
     await new Promise(async (resolve, reject) => {
       DockerodeHelper.down(this.getContainerId(), this.callerInstance.getName())
         .then(() => {
           this.setStatus("down");
-          var index = ports.indexOf(this.getPortNumber());
-          if (index !== -1) {
-            ports.splice(index, 1);
-          }
-          this.callerInstance.callerPlugin.gluePluginStore.set("ports", ports);
-
-          this.setPortNumber(null);
           this.setContainerId(null);
           return resolve(true);
         })

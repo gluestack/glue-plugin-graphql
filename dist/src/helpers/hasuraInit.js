@@ -41,24 +41,26 @@ var SpawnHelper = require("@gluestack/helpers").SpawnHelper;
 var isEndpointUp_1 = require("./isEndpointUp");
 function installScript(graphqlPluginInstance) {
     return __awaiter(this, void 0, void 0, function () {
-        var containerController, env;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var containerController, env, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     containerController = graphqlPluginInstance.getContainerController();
                     return [4, containerController.getEnv()];
                 case 1:
-                    env = _a.sent();
-                    return [2, [
-                            "hasura",
-                            "init",
-                            ".",
-                            "--endpoint",
-                            "http://localhost:".concat(containerController.getPortNumber()),
-                            "--admin-secret",
-                            env.HASURA_GRAPHQL_ADMIN_SECRET,
-                            "--skip-update-check",
-                        ]];
+                    env = _c.sent();
+                    _a = ["hasura",
+                        "init",
+                        ".",
+                        "--endpoint"];
+                    _b = "http://localhost:".concat;
+                    return [4, containerController.getPortNumber()];
+                case 2: return [2, _a.concat([
+                        _b.apply("http://localhost:", [_c.sent()]),
+                        "--admin-secret",
+                        env.HASURA_GRAPHQL_ADMIN_SECRET,
+                        "--skip-update-check"
+                    ])];
             }
         });
     });
@@ -70,39 +72,46 @@ function hasuraInit(graphqlPluginInstance) {
         containerController
             .up()
             .then(function () { return __awaiter(_this, void 0, void 0, function () {
+            var _a, _b;
             var _this = this;
-            return __generator(this, function (_a) {
-                (0, isEndpointUp_1.isEndpointUp)("http://localhost:".concat(containerController
-                    .getPortNumber(), "/v1/version"))
-                    .then(function () { return __awaiter(_this, void 0, void 0, function () {
-                    var _a, _b, _c, _d, _e, _f, _g;
-                    return __generator(this, function (_h) {
-                        switch (_h.label) {
-                            case 0:
-                                console.log("\x1b[33m");
-                                _b = (_a = console).log;
-                                _d = (_c = "".concat(graphqlPluginInstance.getName(), ": Running `")).concat;
-                                return [4, installScript(graphqlPluginInstance)];
-                            case 1:
-                                _b.apply(_a, [_d.apply(_c, [(_h.sent()).join(" "), "`"])]);
-                                console.log("\x1b[0m");
-                                _f = (_e = SpawnHelper).run;
-                                _g = [graphqlPluginInstance.getInstallationPath()];
-                                return [4, installScript(graphqlPluginInstance)];
-                            case 2:
-                                _f.apply(_e, _g.concat([_h.sent()]))
-                                    .then(function (resp) {
-                                    return resolve(true);
-                                })["catch"](function (e) {
-                                    return reject(e);
-                                });
-                                return [2];
-                        }
-                    });
-                }); })["catch"](function (e) {
-                    return reject(e);
-                });
-                return [2];
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _a = isEndpointUp_1.isEndpointUp;
+                        _b = "http://localhost:".concat;
+                        return [4, containerController.getPortNumber()];
+                    case 1:
+                        _a.apply(void 0, [_b.apply("http://localhost:", [_c.sent(), "/v1/version"])])
+                            .then(function () { return __awaiter(_this, void 0, void 0, function () {
+                            var _a, _b, _c, _d, _e, _f, _g;
+                            return __generator(this, function (_h) {
+                                switch (_h.label) {
+                                    case 0:
+                                        console.log("\x1b[33m");
+                                        _b = (_a = console).log;
+                                        _d = (_c = "".concat(graphqlPluginInstance.getName(), ": Running `")).concat;
+                                        return [4, installScript(graphqlPluginInstance)];
+                                    case 1:
+                                        _b.apply(_a, [_d.apply(_c, [(_h.sent()).join(" "), "`"])]);
+                                        console.log("\x1b[0m");
+                                        _f = (_e = SpawnHelper).run;
+                                        _g = [graphqlPluginInstance.getInstallationPath()];
+                                        return [4, installScript(graphqlPluginInstance)];
+                                    case 2:
+                                        _f.apply(_e, _g.concat([_h.sent()]))
+                                            .then(function (resp) {
+                                            return resolve(true);
+                                        })["catch"](function (e) {
+                                            return reject(e);
+                                        });
+                                        return [2];
+                                }
+                            });
+                        }); })["catch"](function (e) {
+                            return reject(e);
+                        });
+                        return [2];
+                }
             });
         }); })["catch"](function (e) {
             return reject(e);

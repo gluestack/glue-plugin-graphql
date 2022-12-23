@@ -59,7 +59,7 @@ function selectPostgresInstance(postgresInstances) {
                         var _a;
                         return {
                             title: "".concat(instance.getName()),
-                            description: "Will attach database \"".concat((_a = instance.gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name, "\""),
+                            description: "Will attach database \"".concat((_a = instance.gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name, "\" running on port ").concat(instance.getContainerController().portNumber),
                             value: instance
                         };
                     });

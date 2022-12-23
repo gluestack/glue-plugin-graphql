@@ -90,18 +90,18 @@ var PluginInstance = (function () {
         }
     };
     PluginInstance.prototype.getGraphqlURL = function () {
-        return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().getPortNumber(), "/v1/graphql");
+        return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().portNumber, "/v1/graphql");
     };
     PluginInstance.prototype.getMetdataURL = function () {
-        return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().getPortNumber(), "/v1/metadata");
+        return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().portNumber, "/v1/metadata");
     };
     PluginInstance.prototype.getSecret = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4, this.getContainerController().getEnv()];
-                    case 1: return [2, (_a.sent())
-                            .HASURA_GRAPHQL_ADMIN_SECRET || null];
+                    case 1: return [2, ((_a.sent())
+                            .HASURA_GRAPHQL_ADMIN_SECRET || null)];
                 }
             });
         });
