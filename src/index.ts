@@ -48,7 +48,7 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
   }
 
   getInstallationPath(target: string): string {
-    return `./backend/${target}`;
+    return `./backend/functions/${target}`;
   }
 
   async runPostInstall(instanceName: string, target: string) {
