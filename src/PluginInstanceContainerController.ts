@@ -24,8 +24,7 @@ const defaultEnv: any = {
 };
 
 export class PluginInstanceContainerController
-  implements IContainerController, IPortNumber
-{
+  implements IContainerController, IPortNumber {
   app: IApp;
   status: "up" | "down" = "down";
   portNumber: number;
@@ -66,7 +65,7 @@ export class PluginInstanceContainerController
         (await this.callerInstance
           ?.getPostgresInstance()
           ?.getConnectionString()) || null,
-      PG_DATABASE_URL:
+      HASURA_GRAPHQL_DATABASE_URL:
         (await this.callerInstance
           ?.getPostgresInstance()
           ?.getConnectionString()) || null,
@@ -74,7 +73,7 @@ export class PluginInstanceContainerController
     for (const key in dbEnv) {
       env[key] = await this.getFromGlobalEnv(key, dbEnv[key]);
     }
-    if (!env.PG_DATABASE_URL) {
+    if (!env.HASURA_GRAPHQL_DATABASE_URL) {
       throw new Error("Postgres instance not set");
     }
 
@@ -154,7 +153,7 @@ export class PluginInstanceContainerController
     return (this.containerId = containerId || null);
   }
 
-  getConfig(): any {}
+  getConfig(): any { }
 
   async up() {
     if (!this.callerInstance.getPostgresInstance()) {

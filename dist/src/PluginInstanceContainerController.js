@@ -118,7 +118,7 @@ var PluginInstanceContainerController = (function () {
                         _r.HASURA_GRAPHQL_METADATA_DATABASE_URL = (_s.sent()) || null;
                         return [4, ((_d = (_c = this.callerInstance) === null || _c === void 0 ? void 0 : _c.getPostgresInstance()) === null || _d === void 0 ? void 0 : _d.getConnectionString())];
                     case 6:
-                        dbEnv = (_r.PG_DATABASE_URL = (_s.sent()) || null,
+                        dbEnv = (_r.HASURA_GRAPHQL_DATABASE_URL = (_s.sent()) || null,
                             _r);
                         _k = dbEnv;
                         _l = [];
@@ -141,7 +141,7 @@ var PluginInstanceContainerController = (function () {
                         _o++;
                         return [3, 7];
                     case 10:
-                        if (!env.PG_DATABASE_URL) {
+                        if (!env.HASURA_GRAPHQL_DATABASE_URL) {
                             throw new Error("Postgres instance not set");
                         }
                         return [2, env];
