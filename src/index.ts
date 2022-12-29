@@ -9,6 +9,7 @@ import IManagesInstances from "@gluestack/framework/types/plugin/interface/IMana
 import IGlueStorePlugin from "@gluestack/framework/types/store/interface/IGluePluginStore";
 import { attachPostgresInstance } from "./attachPostgresInstance";
 import { hasuraInit } from "./helpers/hasuraInit";
+import { writeEnv } from "./helpers/write-env";
 
 //Do not edit the name of this class
 export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
@@ -68,12 +69,19 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     }
     let hasDBConfig = false;
     const postgresInstanceswithDB: IInstance[] = [];
+
+    const dbConfigs: any = {};
     for (const instance of postgresPlugin.getInstances()) {
       if (
         instance.gluePluginStore.get("db_config")?.username &&
         instance.gluePluginStore.get("db_config")?.db_name &&
         instance.gluePluginStore.get("db_config")?.password
       ) {
+        dbConfigs.username = instance.gluePluginStore.get("db_config")?.username;
+        dbConfigs.db_name = instance.gluePluginStore.get("db_config")?.db_name;
+        dbConfigs.password = instance.gluePluginStore.get("db_config")?.password;
+        dbConfigs.port = instance.gluePluginStore.get("port_number");
+
         hasDBConfig = true;
         postgresInstanceswithDB.push(instance);
       }
@@ -92,6 +100,7 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     );
     await attachPostgresInstance(graphqlInstance, postgresInstanceswithDB);
     await hasuraInit(graphqlInstance);
+    await writeEnv(graphqlInstance, dbConfigs);
   }
 
   createInstance(

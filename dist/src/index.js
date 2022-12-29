@@ -44,6 +44,7 @@ var package_json_1 = __importDefault(require("../package.json"));
 var PluginInstance_1 = require("./PluginInstance");
 var attachPostgresInstance_1 = require("./attachPostgresInstance");
 var hasuraInit_1 = require("./helpers/hasuraInit");
+var write_env_1 = require("./helpers/write-env");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = "stateless";
@@ -71,11 +72,11 @@ var GlueStackPlugin = (function () {
         return "./backend/functions/".concat(target);
     };
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function () {
-            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, _i, _d, instance, graphqlInstance;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance;
+            return __generator(this, function (_h) {
+                switch (_h.label) {
                     case 0:
                         postgresPlugin = this.app.getPluginByName("@gluestack/glue-plugin-postgres");
                         if (!postgresPlugin || !postgresPlugin.getInstances().length) {
@@ -86,11 +87,16 @@ var GlueStackPlugin = (function () {
                         }
                         hasDBConfig = false;
                         postgresInstanceswithDB = [];
-                        for (_i = 0, _d = postgresPlugin.getInstances(); _i < _d.length; _i++) {
-                            instance = _d[_i];
+                        dbConfigs = {};
+                        for (_i = 0, _g = postgresPlugin.getInstances(); _i < _g.length; _i++) {
+                            instance = _g[_i];
                             if (((_a = instance.gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.username) &&
                                 ((_b = instance.gluePluginStore.get("db_config")) === null || _b === void 0 ? void 0 : _b.db_name) &&
                                 ((_c = instance.gluePluginStore.get("db_config")) === null || _c === void 0 ? void 0 : _c.password)) {
+                                dbConfigs.username = (_d = instance.gluePluginStore.get("db_config")) === null || _d === void 0 ? void 0 : _d.username;
+                                dbConfigs.db_name = (_e = instance.gluePluginStore.get("db_config")) === null || _e === void 0 ? void 0 : _e.db_name;
+                                dbConfigs.password = (_f = instance.gluePluginStore.get("db_config")) === null || _f === void 0 ? void 0 : _f.password;
+                                dbConfigs.port = instance.gluePluginStore.get("port_number");
                                 hasDBConfig = true;
                                 postgresInstanceswithDB.push(instance);
                             }
@@ -100,13 +106,16 @@ var GlueStackPlugin = (function () {
                         }
                         return [4, this.app.createPluginInstance(this, instanceName, this.getTemplateFolderPath(), target)];
                     case 1:
-                        graphqlInstance = _e.sent();
+                        graphqlInstance = _h.sent();
                         return [4, (0, attachPostgresInstance_1.attachPostgresInstance)(graphqlInstance, postgresInstanceswithDB)];
                     case 2:
-                        _e.sent();
+                        _h.sent();
                         return [4, (0, hasuraInit_1.hasuraInit)(graphqlInstance)];
                     case 3:
-                        _e.sent();
+                        _h.sent();
+                        return [4, (0, write_env_1.writeEnv)(graphqlInstance, dbConfigs)];
+                    case 4:
+                        _h.sent();
                         return [2];
                 }
             });
