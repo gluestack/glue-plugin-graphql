@@ -6,7 +6,6 @@ import { IHasPostgresInstance } from "./interfaces/IHasPostgresInstance";
 import { hasuraCommand } from "./helpers/hasuraCommand";
 import IHasContainerController from "@gluestack/framework/types/plugin/interface/IHasContainerController";
 import { PluginInstance } from "./PluginInstance";
-import { generateDockerfile } from "./create-dockerfile";
 import { IPortNumber } from "./interfaces/IPortNumber";
 const { GlobalEnv } = require("@gluestack/helpers");
 
@@ -85,32 +84,14 @@ export class PluginInstanceContainerController
   }
 
   async getDockerJson() {
-    return {
-      Image: "hasura/graphql-engine",
-      WorkingDir: "/hasura",
-      HostConfig: {
-        PortBindings: {
-          "8080/tcp": [
-            {
-              HostPort: (await this.getPortNumber()).toString(),
-            },
-          ],
-        },
-      },
-      ExposedPorts: {
-        "8080/tcp": {},
-      },
-      RestartPolicy: {
-        Name: "always",
-      },
-    };
+    // do nothing
   }
 
   getStatus(): "up" | "down" {
     return this.status;
   }
 
-  //@ts-ignore
+  // @ts-ignore
   async getPortNumber(returnDefault?: boolean) {
     return new Promise((resolve, reject) => {
       if (this.portNumber) {
@@ -156,105 +137,14 @@ export class PluginInstanceContainerController
   getConfig(): any { }
 
   async up() {
-    if (!this.callerInstance.getPostgresInstance()) {
-      throw new Error(
-        `No postgres instance attached with ${this.callerInstance.getName()}`,
-      );
-    }
-    if (
-      !(await this.callerInstance
-        .getPostgresInstance()
-        .getConnectionString()) ||
-      !this.callerInstance.getPostgresInstance()?.getContainerController()
-    ) {
-      throw new Error(
-        `Not a valid postgres db configured with ${this.callerInstance.getName()}`,
-      );
-    }
-    if (
-      this.callerInstance
-        .getPostgresInstance()
-        ?.getContainerController()
-        ?.getStatus() !== "up"
-    ) {
-      await this.callerInstance
-        .getPostgresInstance()
-        ?.getContainerController()
-        ?.up();
-      this.callerInstance.gluePluginStore.set("postgres_booted", false);
-    }
-
-    if (!this.callerInstance.gluePluginStore.get("postgres_booted")) {
-      console.log("\x1b[36m");
-      console.log(
-        `Initializing graphql endpoint, waiting for postgres database...`,
-      );
-      console.log("\x1b[0m");
-    }
-
-    await new Promise(async (resolve, reject) => {
-      setTimeout(
-        async () => {
-          DockerodeHelper.up(
-            await this.getDockerJson(),
-            await this.getEnv(),
-            await this.getPortNumber(),
-            this.callerInstance.getName(),
-          )
-            .then(
-              ({
-                status,
-                containerId,
-              }: {
-                status: "up" | "down";
-                containerId: string;
-              }) => {
-                this.setStatus(status);
-                this.setContainerId(containerId);
-                hasuraCommand(this.callerInstance, "version")
-                  .then(() => {
-                    console.log("\x1b[35m");
-                    console.log(
-                      `You can now use these endpoint for graphql: ${this.callerInstance.getGraphqlURL()}`,
-                    );
-                    console.log("\x1b[0m");
-                    this.callerInstance.gluePluginStore.set(
-                      "postgres_booted",
-                      true,
-                    );
-                    return resolve(true);
-                  })
-                  .catch((e: any) => {
-                    return resolve(true);
-                  });
-              },
-            )
-            .catch((e: any) => {
-              return reject(e);
-            });
-        },
-        this.callerInstance.gluePluginStore.get("postgres_booted")
-          ? 1000
-          : 30 * 1000,
-      );
-    });
+    // do nothing
   }
 
   async down() {
-    await new Promise(async (resolve, reject) => {
-      DockerodeHelper.down(this.getContainerId(), this.callerInstance.getName())
-        .then(() => {
-          this.setStatus("down");
-          this.setContainerId(null);
-          return resolve(true);
-        })
-        .catch((e: any) => {
-          return reject(e);
-        });
-    });
+    // do nothing
   }
 
   async build() {
-    await generateDockerfile(this.callerInstance.getInstallationPath());
+    // await generateDockerfile(this.callerInstance.getInstallationPath());
   }
 }

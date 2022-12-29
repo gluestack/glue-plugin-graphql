@@ -38,8 +38,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.PluginInstanceContainerController = void 0;
 var DockerodeHelper = require("@gluestack/helpers").DockerodeHelper;
-var hasuraCommand_1 = require("./helpers/hasuraCommand");
-var create_dockerfile_1 = require("./create-dockerfile");
 var GlobalEnv = require("@gluestack/helpers").GlobalEnv;
 var defaultEnv = {
     HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
@@ -154,34 +152,8 @@ var PluginInstanceContainerController = (function () {
     };
     PluginInstanceContainerController.prototype.getDockerJson = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            var _b, _c, _d, _e;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
-                    case 0:
-                        _b = {
-                            Image: "hasura/graphql-engine",
-                            WorkingDir: "/hasura"
-                        };
-                        _c = {};
-                        _d = {};
-                        _a = "8080/tcp";
-                        _e = {};
-                        return [4, this.getPortNumber()];
-                    case 1: return [2, (_b.HostConfig = (_c.PortBindings = (_d[_a] = [
-                            (_e.HostPort = (_f.sent()).toString(),
-                                _e)
-                        ],
-                            _d),
-                            _c),
-                            _b.ExposedPorts = {
-                                "8080/tcp": {}
-                            },
-                            _b.RestartPolicy = {
-                                Name: "always"
-                            },
-                            _b)];
-                }
+            return __generator(this, function (_a) {
+                return [2];
             });
         });
     };
@@ -227,124 +199,23 @@ var PluginInstanceContainerController = (function () {
     };
     PluginInstanceContainerController.prototype.getConfig = function () { };
     PluginInstanceContainerController.prototype.up = function () {
-        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
-                    case 0:
-                        if (!this.callerInstance.getPostgresInstance()) {
-                            throw new Error("No postgres instance attached with ".concat(this.callerInstance.getName()));
-                        }
-                        return [4, this.callerInstance
-                                .getPostgresInstance()
-                                .getConnectionString()];
-                    case 1:
-                        if (!(_f.sent()) ||
-                            !((_a = this.callerInstance.getPostgresInstance()) === null || _a === void 0 ? void 0 : _a.getContainerController())) {
-                            throw new Error("Not a valid postgres db configured with ".concat(this.callerInstance.getName()));
-                        }
-                        if (!(((_c = (_b = this.callerInstance
-                            .getPostgresInstance()) === null || _b === void 0 ? void 0 : _b.getContainerController()) === null || _c === void 0 ? void 0 : _c.getStatus()) !== "up")) return [3, 3];
-                        return [4, ((_e = (_d = this.callerInstance
-                                .getPostgresInstance()) === null || _d === void 0 ? void 0 : _d.getContainerController()) === null || _e === void 0 ? void 0 : _e.up())];
-                    case 2:
-                        _f.sent();
-                        this.callerInstance.gluePluginStore.set("postgres_booted", false);
-                        _f.label = 3;
-                    case 3:
-                        if (!this.callerInstance.gluePluginStore.get("postgres_booted")) {
-                            console.log("\x1b[36m");
-                            console.log("Initializing graphql endpoint, waiting for postgres database...");
-                            console.log("\x1b[0m");
-                        }
-                        return [4, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                                var _this = this;
-                                return __generator(this, function (_a) {
-                                    setTimeout(function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var _a, _b, _c;
-                                        var _this = this;
-                                        return __generator(this, function (_d) {
-                                            switch (_d.label) {
-                                                case 0:
-                                                    _b = (_a = DockerodeHelper).up;
-                                                    return [4, this.getDockerJson()];
-                                                case 1:
-                                                    _c = [_d.sent()];
-                                                    return [4, this.getEnv()];
-                                                case 2:
-                                                    _c = _c.concat([_d.sent()]);
-                                                    return [4, this.getPortNumber()];
-                                                case 3:
-                                                    _b.apply(_a, _c.concat([_d.sent(), this.callerInstance.getName()]))
-                                                        .then(function (_a) {
-                                                        var status = _a.status, containerId = _a.containerId;
-                                                        _this.setStatus(status);
-                                                        _this.setContainerId(containerId);
-                                                        (0, hasuraCommand_1.hasuraCommand)(_this.callerInstance, "version")
-                                                            .then(function () {
-                                                            console.log("\x1b[35m");
-                                                            console.log("You can now use these endpoint for graphql: ".concat(_this.callerInstance.getGraphqlURL()));
-                                                            console.log("\x1b[0m");
-                                                            _this.callerInstance.gluePluginStore.set("postgres_booted", true);
-                                                            return resolve(true);
-                                                        })["catch"](function (e) {
-                                                            return resolve(true);
-                                                        });
-                                                    })["catch"](function (e) {
-                                                        return reject(e);
-                                                    });
-                                                    return [2];
-                                            }
-                                        });
-                                    }); }, this.callerInstance.gluePluginStore.get("postgres_booted")
-                                        ? 1000
-                                        : 30 * 1000);
-                                    return [2];
-                                });
-                            }); })];
-                    case 4:
-                        _f.sent();
-                        return [2];
-                }
+            return __generator(this, function (_a) {
+                return [2];
             });
         });
     };
     PluginInstanceContainerController.prototype.down = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                            var _this = this;
-                            return __generator(this, function (_a) {
-                                DockerodeHelper.down(this.getContainerId(), this.callerInstance.getName())
-                                    .then(function () {
-                                    _this.setStatus("down");
-                                    _this.setContainerId(null);
-                                    return resolve(true);
-                                })["catch"](function (e) {
-                                    return reject(e);
-                                });
-                                return [2];
-                            });
-                        }); })];
-                    case 1:
-                        _a.sent();
-                        return [2];
-                }
+                return [2];
             });
         });
     };
     PluginInstanceContainerController.prototype.build = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, (0, create_dockerfile_1.generateDockerfile)(this.callerInstance.getInstallationPath())];
-                    case 1:
-                        _a.sent();
-                        return [2];
-                }
+                return [2];
             });
         });
     };
