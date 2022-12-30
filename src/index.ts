@@ -10,6 +10,8 @@ import IGlueStorePlugin from "@gluestack/framework/types/store/interface/IGluePl
 import { attachPostgresInstance } from "./attachPostgresInstance";
 import { hasuraInit } from "./helpers/hasuraInit";
 import { writeEnv } from "./helpers/write-env";
+import renameDir from "./helpers/renameDirectory";
+import reWriteFile from "./helpers/reWriteFile";
 
 //Do not edit the name of this class
 export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
@@ -100,7 +102,27 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     );
     await attachPostgresInstance(graphqlInstance, postgresInstanceswithDB);
     // await hasuraInit(graphqlInstance);
+
     await writeEnv(graphqlInstance, dbConfigs);
+
+    // rename metadata Dir
+    const metadataDir = `${this.getTemplateFolderPath()}/metadata/databases`;
+    await renameDir(metadataDir, 'my_first_db', dbConfigs.db_name)
+
+    // rename migrations Dir
+    const migraitonDir = `${this.getTemplateFolderPath()}/migrations`;
+    await renameDir(migraitonDir, 'my_first_db', dbConfigs.db_name)
+
+    // replace string in database.yaml file
+    const yamlFile = `${this.getTemplateFolderPath()}/metadata/databases/databases.yaml`;
+    // change postgres database name
+    await reWriteFile(yamlFile, dbConfigs.db_name)
+
+    // change postgres username name
+    await reWriteFile(yamlFile, dbConfigs.username, 'postgres')
+
+    // change postgres password name
+    await reWriteFile(yamlFile, dbConfigs.password, 'postgrespass')
   }
 
   createInstance(
