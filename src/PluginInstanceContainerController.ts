@@ -134,7 +134,9 @@ export class PluginInstanceContainerController
     return (this.containerId = containerId || null);
   }
 
-  getConfig(): any { }
+  getConfig(): any {
+    // do nothing
+  }
 
   async up() {
     // do nothing

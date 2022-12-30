@@ -99,7 +99,7 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
       target,
     );
     await attachPostgresInstance(graphqlInstance, postgresInstanceswithDB);
-    await hasuraInit(graphqlInstance);
+    // await hasuraInit(graphqlInstance);
     await writeEnv(graphqlInstance, dbConfigs);
   }
 

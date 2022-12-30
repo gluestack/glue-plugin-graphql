@@ -43,7 +43,6 @@ exports.GlueStackPlugin = void 0;
 var package_json_1 = __importDefault(require("../package.json"));
 var PluginInstance_1 = require("./PluginInstance");
 var attachPostgresInstance_1 = require("./attachPostgresInstance");
-var hasuraInit_1 = require("./helpers/hasuraInit");
 var write_env_1 = require("./helpers/write-env");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
@@ -110,11 +109,8 @@ var GlueStackPlugin = (function () {
                         return [4, (0, attachPostgresInstance_1.attachPostgresInstance)(graphqlInstance, postgresInstanceswithDB)];
                     case 2:
                         _h.sent();
-                        return [4, (0, hasuraInit_1.hasuraInit)(graphqlInstance)];
-                    case 3:
-                        _h.sent();
                         return [4, (0, write_env_1.writeEnv)(graphqlInstance, dbConfigs)];
-                    case 4:
+                    case 3:
                         _h.sent();
                         return [2];
                 }

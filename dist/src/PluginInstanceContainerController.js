@@ -197,7 +197,8 @@ var PluginInstanceContainerController = (function () {
         this.callerInstance.gluePluginStore.set("container_id", containerId || null);
         return (this.containerId = containerId || null);
     };
-    PluginInstanceContainerController.prototype.getConfig = function () { };
+    PluginInstanceContainerController.prototype.getConfig = function () {
+    };
     PluginInstanceContainerController.prototype.up = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
