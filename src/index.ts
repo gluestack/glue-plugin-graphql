@@ -122,10 +122,10 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     await reWriteFile(yamlFile, dbConfigs.db_name)
 
     // change postgres username name
-    await reWriteFile(yamlFile, dbConfigs.username, 'postgres')
+    await reWriteFile(yamlFile, `${dbConfigs.username}:`, 'postgres:')
 
     // change postgres password name
-    await reWriteFile(yamlFile, dbConfigs.password, 'postgrespass')
+    await reWriteFile(yamlFile, `:${dbConfigs.password}`, ':postgrespass')
   }
 
   createInstance(

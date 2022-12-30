@@ -126,10 +126,10 @@ var GlueStackPlugin = (function () {
                         return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.db_name)];
                     case 6:
                         _h.sent();
-                        return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.username, 'postgres')];
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, "".concat(dbConfigs.username, ":"), 'postgres:')];
                     case 7:
                         _h.sent();
-                        return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.password, 'postgrespass')];
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, ":".concat(dbConfigs.password), ':postgrespass')];
                     case 8:
                         _h.sent();
                         return [2];
