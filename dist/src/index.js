@@ -44,6 +44,8 @@ var package_json_1 = __importDefault(require("../package.json"));
 var PluginInstance_1 = require("./PluginInstance");
 var attachPostgresInstance_1 = require("./attachPostgresInstance");
 var write_env_1 = require("./helpers/write-env");
+var renameDirectory_1 = __importDefault(require("./helpers/renameDirectory"));
+var reWriteFile_1 = __importDefault(require("./helpers/reWriteFile"));
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = "stateless";
@@ -73,7 +75,7 @@ var GlueStackPlugin = (function () {
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
         var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function () {
-            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance;
+            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile;
             return __generator(this, function (_h) {
                 switch (_h.label) {
                     case 0:
@@ -111,6 +113,24 @@ var GlueStackPlugin = (function () {
                         _h.sent();
                         return [4, (0, write_env_1.writeEnv)(graphqlInstance, dbConfigs)];
                     case 3:
+                        _h.sent();
+                        metadataDir = "".concat(this.getTemplateFolderPath(), "/metadata/databases");
+                        return [4, (0, renameDirectory_1["default"])(metadataDir, 'my_first_db', dbConfigs.db_name)];
+                    case 4:
+                        _h.sent();
+                        migraitonDir = "".concat(this.getTemplateFolderPath(), "/migrations");
+                        return [4, (0, renameDirectory_1["default"])(migraitonDir, 'my_first_db', dbConfigs.db_name)];
+                    case 5:
+                        _h.sent();
+                        yamlFile = "".concat(this.getTemplateFolderPath(), "/metadata/databases/databases.yaml");
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.db_name)];
+                    case 6:
+                        _h.sent();
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.username, 'postgres')];
+                    case 7:
+                        _h.sent();
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.password, 'postgrespass')];
+                    case 8:
                         _h.sent();
                         return [2];
                 }

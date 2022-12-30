@@ -12,7 +12,10 @@
         "esModuleInterop": true,
         "paths": {
             "@gluestack/framework": ["node_modules/@gluestack/framework"]
-        }
+        },
+        "lib": [
+            "ES2021.String"
+          ]
     },
     "include": [
         "src/**/*.ts"
