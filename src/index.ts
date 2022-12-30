@@ -100,7 +100,9 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
       this.getTemplateFolderPath(),
       target,
     );
+
     await attachPostgresInstance(graphqlInstance, postgresInstanceswithDB);
+
     // await hasuraInit(graphqlInstance);
 
     await writeEnv(graphqlInstance, dbConfigs);
@@ -115,6 +117,7 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
 
     // replace string in database.yaml file
     const yamlFile = `${graphqlInstance.getInstallationPath()}/metadata/databases/databases.yaml`;
+
     // change postgres database name
     await reWriteFile(yamlFile, dbConfigs.db_name)
 
