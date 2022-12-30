@@ -114,15 +114,15 @@ var GlueStackPlugin = (function () {
                         return [4, (0, write_env_1.writeEnv)(graphqlInstance, dbConfigs)];
                     case 3:
                         _h.sent();
-                        metadataDir = "".concat(this.getTemplateFolderPath(), "/metadata/databases");
+                        metadataDir = "".concat(graphqlInstance.getInstallationPath(), "/metadata/databases");
                         return [4, (0, renameDirectory_1["default"])(metadataDir, 'my_first_db', dbConfigs.db_name)];
                     case 4:
                         _h.sent();
-                        migraitonDir = "".concat(this.getTemplateFolderPath(), "/migrations");
+                        migraitonDir = "".concat(graphqlInstance.getInstallationPath(), "/migrations");
                         return [4, (0, renameDirectory_1["default"])(migraitonDir, 'my_first_db', dbConfigs.db_name)];
                     case 5:
                         _h.sent();
-                        yamlFile = "".concat(this.getTemplateFolderPath(), "/metadata/databases/databases.yaml");
+                        yamlFile = "".concat(graphqlInstance.getInstallationPath(), "/metadata/databases/databases.yaml");
                         return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.db_name)];
                     case 6:
                         _h.sent();

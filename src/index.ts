@@ -106,15 +106,15 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     await writeEnv(graphqlInstance, dbConfigs);
 
     // rename metadata Dir
-    const metadataDir = `${this.getTemplateFolderPath()}/metadata/databases`;
+    const metadataDir = `${graphqlInstance.getInstallationPath()}/metadata/databases`;
     await renameDir(metadataDir, 'my_first_db', dbConfigs.db_name)
 
     // rename migrations Dir
-    const migraitonDir = `${this.getTemplateFolderPath()}/migrations`;
+    const migraitonDir = `${graphqlInstance.getInstallationPath()}/migrations`;
     await renameDir(migraitonDir, 'my_first_db', dbConfigs.db_name)
 
     // replace string in database.yaml file
-    const yamlFile = `${this.getTemplateFolderPath()}/metadata/databases/databases.yaml`;
+    const yamlFile = `${graphqlInstance.getInstallationPath()}/metadata/databases/databases.yaml`;
     // change postgres database name
     await reWriteFile(yamlFile, dbConfigs.db_name)
 
