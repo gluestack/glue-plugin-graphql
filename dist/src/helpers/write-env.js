@@ -70,7 +70,7 @@ function constructEnvFromJson(db, hasuraPort) {
                 HASURA_GRAPHQL_METADATA_DATABASE_URL: "postgresql://".concat(db.username, ":").concat(db.password, "@localhost:").concat(db.port, "/").concat(db.db_name),
                 HASURA_GRAPHQL_ADMIN_SECRET: "admin-secret",
                 HASURA_GRAPHQL_URL: "http://localhost:".concat(hasuraPort),
-                HASURA_GRAPHQL_JWT_SECRET: '{"type": "HS256", "key": "secret"}',
+                HASURA_GRAPHQL_JWT_SECRET: "{\\\"type\\\": \\\"HS256\\\", \\\"key\\\": \\\"ThisShouldBeAtLeast32CharacterLong\\\"}",
                 HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "guest",
                 HASURA_GRAPHQL_LOG_LEVEL: "DEBUG",
                 HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
