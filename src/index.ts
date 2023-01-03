@@ -8,7 +8,6 @@ import ILifeCycle from "@gluestack/framework/types/plugin/interface/ILifeCycle";
 import IManagesInstances from "@gluestack/framework/types/plugin/interface/IManagesInstances";
 import IGlueStorePlugin from "@gluestack/framework/types/store/interface/IGluePluginStore";
 import { attachPostgresInstance } from "./attachPostgresInstance";
-import { hasuraInit } from "./helpers/hasuraInit";
 import { writeEnv } from "./helpers/write-env";
 import renameDir from "./helpers/renameDirectory";
 import reWriteFile from "./helpers/reWriteFile";
