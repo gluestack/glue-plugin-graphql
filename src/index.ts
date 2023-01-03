@@ -116,13 +116,17 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     const yamlFile = `${graphqlInstance.getInstallationPath()}/metadata/databases/databases.yaml`;
 
     // change postgres database name
-    await reWriteFile(yamlFile, dbConfigs.db_name)
+    await reWriteFile(yamlFile, dbConfigs.db_name);
 
     // change postgres username name
-    await reWriteFile(yamlFile, `${dbConfigs.username}:`, 'postgres:')
+    await reWriteFile(yamlFile, `${dbConfigs.username}:`, 'postgres:');
 
     // change postgres password name
-    await reWriteFile(yamlFile, `:${dbConfigs.password}`, ':postgrespass')
+    await reWriteFile(yamlFile, `:${dbConfigs.password}`, ':postgrespass');
+
+    // change router instance name for proxy
+    const path = `${graphqlInstance.getInstallationPath()}/router.js`;
+    await reWriteFile(path, instanceName, 'hasura');
   }
 
   createInstance(

@@ -75,7 +75,7 @@ var GlueStackPlugin = (function () {
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
         var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function () {
-            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile;
+            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path;
             return __generator(this, function (_h) {
                 switch (_h.label) {
                     case 0:
@@ -131,6 +131,10 @@ var GlueStackPlugin = (function () {
                         _h.sent();
                         return [4, (0, reWriteFile_1["default"])(yamlFile, ":".concat(dbConfigs.password), ':postgrespass')];
                     case 8:
+                        _h.sent();
+                        path = "".concat(graphqlInstance.getInstallationPath(), "/router.js");
+                        return [4, (0, reWriteFile_1["default"])(path, instanceName, 'hasura')];
+                    case 9:
                         _h.sent();
                         return [2];
                 }
