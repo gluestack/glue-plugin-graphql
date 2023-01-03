@@ -37,8 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.PluginInstanceContainerController = void 0;
-var DockerodeHelper = require("@gluestack/helpers").DockerodeHelper;
 var GlobalEnv = require("@gluestack/helpers").GlobalEnv;
+var DockerodeHelper = require("@gluestack/helpers").DockerodeHelper;
 var defaultEnv = {
     HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
     HASURA_GRAPHQL_DEV_MODE: "true",

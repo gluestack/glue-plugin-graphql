@@ -1,13 +1,10 @@
+import { PluginInstance } from "./PluginInstance";
+const { GlobalEnv } = require("@gluestack/helpers");
+import { IPortNumber } from "./interfaces/IPortNumber";
 const { DockerodeHelper } = require("@gluestack/helpers");
 import IApp from "@gluestack/framework/types/app/interface/IApp";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 import IContainerController from "@gluestack/framework/types/plugin/interface/IContainerController";
-import { IHasPostgresInstance } from "./interfaces/IHasPostgresInstance";
-import { hasuraCommand } from "./helpers/hasuraCommand";
-import IHasContainerController from "@gluestack/framework/types/plugin/interface/IHasContainerController";
-import { PluginInstance } from "./PluginInstance";
-import { IPortNumber } from "./interfaces/IPortNumber";
-const { GlobalEnv } = require("@gluestack/helpers");
 
 const defaultEnv: any = {
   HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
@@ -147,6 +144,6 @@ export class PluginInstanceContainerController
   }
 
   async build() {
-    // await generateDockerfile(this.callerInstance.getInstallationPath());
+    // do nothing
   }
 }
