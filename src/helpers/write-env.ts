@@ -4,7 +4,7 @@ import { PluginInstance } from "../PluginInstance";
 export async function constructEnvFromJson(db: any, hasuraPort: any) {
 	const keys: any = {
 		HASURA_GRAPHQL_DB_NAME: db.db_name,
-		HASURA_GRAPHQL_METADATA_DATABASE_URL: `postgresql://${db.username}:${db.password}@localhost:${db.port}/${db.db_name}`,
+		HASURA_GRAPHQL_METADATA_DATABASE_URL: `postgresql://${db.username}:${db.password}@host.docker.internal:${db.port}/${db.db_name}`,
 		HASURA_GRAPHQL_ADMIN_SECRET: "admin-secret",
 		HASURA_GRAPHQL_URL: `http://localhost:${hasuraPort}`,
 		HASURA_GRAPHQL_JWT_SECRET: "{\\\"type\\\": \\\"HS256\\\", \\\"key\\\": \\\"ThisShouldBeAtLeast32CharacterLong\\\"}",

@@ -67,7 +67,7 @@ function constructEnvFromJson(db, hasuraPort) {
         return __generator(this, function (_a) {
             keys = {
                 HASURA_GRAPHQL_DB_NAME: db.db_name,
-                HASURA_GRAPHQL_METADATA_DATABASE_URL: "postgresql://".concat(db.username, ":").concat(db.password, "@localhost:").concat(db.port, "/").concat(db.db_name),
+                HASURA_GRAPHQL_METADATA_DATABASE_URL: "postgresql://".concat(db.username, ":").concat(db.password, "@host.docker.internal:").concat(db.port, "/").concat(db.db_name),
                 HASURA_GRAPHQL_ADMIN_SECRET: "admin-secret",
                 HASURA_GRAPHQL_URL: "http://localhost:".concat(hasuraPort),
                 HASURA_GRAPHQL_JWT_SECRET: "{\\\"type\\\": \\\"HS256\\\", \\\"key\\\": \\\"ThisShouldBeAtLeast32CharacterLong\\\"}",
