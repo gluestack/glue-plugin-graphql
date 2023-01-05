@@ -4,5 +4,5 @@ admin_secret: secret
 metadata_directory: metadata
 actions:
   kind: synchronous
-  handler_webhook_baseurl: {{ACTION_BASE_URL}}
+  handler_webhook_baseurl: "{{ACTION_BASE_URL}}"
 
