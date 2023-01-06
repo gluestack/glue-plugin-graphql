@@ -13,6 +13,7 @@ export async function constructEnvFromJson(db: any, hasuraPort: any) {
 		HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
 		HASURA_GRAPHQL_CORS_DOMAIN: "*",
 		ACTION_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/actions",
+		EVENT_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/events",
 		HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
 	};
 
