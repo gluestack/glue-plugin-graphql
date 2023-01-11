@@ -11,6 +11,8 @@ import { IPostgres } from "@gluestack/glue-plugin-postgres/src/interfaces/IPostg
 import { hasuraCommand } from "./helpers/hasuraCommand";
 import { postMetataData } from "./helpers/postMetataData";
 import { IPortNumber } from "./interfaces/IPortNumber";
+import { copyToTarget } from "./helpers/copyToTarget";
+import writeTrackFile from "./helpers/writeTrackFile";
 
 export class PluginInstance
   implements
@@ -66,6 +68,10 @@ export class PluginInstance
     return `${this.installationPath}/migrations/${this.getDbName()}`;
   }
 
+  getTracksFolderPath(): string {
+    return `${this.installationPath}/tracks`;
+  }
+
   getDbName(): string {
     return (
       this.getPostgresInstance().gluePluginStore.get("db_config")?.db_name ||
@@ -96,7 +102,7 @@ export class PluginInstance
   }
 
   getGraphqlURL(): string {
-    return `http://${this.getContainerController().getIpAddress()}:${
+    return `http://host.docker.internal:${
       this.getContainerController().portNumber
     }/v1/graphql`;
   }
@@ -186,5 +192,13 @@ export class PluginInstance
       body,
       await this.getSecret(),
     );
+  }
+
+  async copyMigration(migrationSrcFolder: string) {
+    await copyToTarget(migrationSrcFolder, this.getMigrationFolderPath());
+  }
+
+  async copyTrackJson(fileName: string, trackJson: any) {
+    await writeTrackFile(fileName, trackJson, this.getTracksFolderPath());
   }
 }

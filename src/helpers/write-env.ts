@@ -25,7 +25,7 @@ export async function writeEnv(graphqlInstance: PluginInstance, db: any) {
 	const port = await graphqlInstance.getContainerController().getPortNumber();
 
 	let env = "";
-	const keys: any = await constructEnvFromJson(db, port);
+	const keys: any = await graphqlInstance.getContainerController().getEnv();
 	Object.keys(keys).forEach((key) => {
 		env += `${key}="${keys[key]}"
 `;

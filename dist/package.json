@@ -1,6 +1,6 @@
 {
     "name": "@gluestack/glue-plugin-graphql",
-    "version": "0.0.25",
+    "version": "0.0.26",
     "description": "gluestack plugin for graphql",
     "repository": {
         "type": "git",
@@ -22,6 +22,7 @@
         "@gluestack/glue-plugin-postgres": "^0.0.7",
         "@gluestack/helpers": "^0.0.9",
         "@types/node": "^18.11.16",
+        "fs-extra": "^11.1.0",
         "prompts": "^2.4.2",
         "request": "^2.88.2"
     },

@@ -95,7 +95,7 @@ function writeEnv(graphqlInstance, db) {
                 case 1:
                     port = _a.sent();
                     env = "";
-                    return [4, constructEnvFromJson(db, port)];
+                    return [4, graphqlInstance.getContainerController().getEnv()];
                 case 2:
                     keys = _a.sent();
                     Object.keys(keys).forEach(function (key) {

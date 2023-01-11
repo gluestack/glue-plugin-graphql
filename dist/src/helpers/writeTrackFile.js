@@ -35,22 +35,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
-exports.generateDockerfile = void 0;
-var path_1 = require("path");
-var fs_1 = require("fs");
-var generateDockerfile = function (installationPath) { return __awaiter(void 0, void 0, void 0, function () {
-    var filepath, dockerfile;
+var fs_1 = __importDefault(require("fs"));
+var os_1 = __importDefault(require("os"));
+var util_1 = __importDefault(require("util"));
+var writeFile = util_1["default"].promisify(fs_1["default"].writeFile);
+var writeTrackFile = function (fileName, fileContent, folderPath) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        filepath = (0, path_1.join)(process.cwd(), installationPath);
-        dockerfile = [];
-        dockerfile.push("FROM hasura/graphql-engine");
-        dockerfile.push("COPY . .");
-        dockerfile.push("EXPOSE 8080");
-        dockerfile.push('CMD [ "graphql-engine", "serve" ]');
-        (0, fs_1.writeFileSync)((0, path_1.join)(filepath, "Dockerfile"), dockerfile.join("\n"));
-        return [2];
+        return [2, new Promise(function (resolve, reject) { return __awaiter(void 0, void 0, void 0, function () {
+                var err_1;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            _a.trys.push([0, 2, , 3]);
+                            if (!fs_1["default"].existsSync(folderPath)) {
+                                fs_1["default"].mkdirSync(folderPath, { recursive: true });
+                            }
+                            return [4, writeFile("".concat(folderPath, "/").concat(fileName), JSON.stringify(fileContent, null, 2) + os_1["default"].EOL)];
+                        case 1:
+                            _a.sent();
+                            resolve("done");
+                            return [3, 3];
+                        case 2:
+                            err_1 = _a.sent();
+                            reject(err_1);
+                            return [3, 3];
+                        case 3: return [2];
+                    }
+                });
+            }); })];
     });
 }); };
-exports.generateDockerfile = generateDockerfile;
-//# sourceMappingURL=create-dockerfile.js.map
+exports["default"] = writeTrackFile;
+//# sourceMappingURL=writeTrackFile.js.map

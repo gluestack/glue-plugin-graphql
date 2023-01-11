@@ -35,11 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
 exports.PluginInstance = void 0;
 var PluginInstanceContainerController_1 = require("./PluginInstanceContainerController");
 var hasuraCommand_1 = require("./helpers/hasuraCommand");
 var postMetataData_1 = require("./helpers/postMetataData");
+var copyToTarget_1 = require("./helpers/copyToTarget");
+var writeTrackFile_1 = __importDefault(require("./helpers/writeTrackFile"));
 var PluginInstance = (function () {
     function PluginInstance(app, callerPlugin, name, gluePluginStore, installationPath) {
         this.isOfTypeInstance = false;
@@ -66,6 +71,9 @@ var PluginInstance = (function () {
     PluginInstance.prototype.getMigrationFolderPath = function () {
         return "".concat(this.installationPath, "/migrations/").concat(this.getDbName());
     };
+    PluginInstance.prototype.getTracksFolderPath = function () {
+        return "".concat(this.installationPath, "/tracks");
+    };
     PluginInstance.prototype.getDbName = function () {
         var _a;
         return (((_a = this.getPostgresInstance().gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.db_name) ||
@@ -90,7 +98,7 @@ var PluginInstance = (function () {
         }
     };
     PluginInstance.prototype.getGraphqlURL = function () {
-        return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().portNumber, "/v1/graphql");
+        return "http://host.docker.internal:".concat(this.getContainerController().portNumber, "/v1/graphql");
     };
     PluginInstance.prototype.getMetdataURL = function () {
         return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().portNumber, "/v1/metadata");
@@ -193,6 +201,30 @@ var PluginInstance = (function () {
                         return [4, this.getSecret()];
                     case 1: return [4, _a.apply(void 0, _b.concat([_c.sent()]))];
                     case 2: return [2, _c.sent()];
+                }
+            });
+        });
+    };
+    PluginInstance.prototype.copyMigration = function (migrationSrcFolder) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, (0, copyToTarget_1.copyToTarget)(migrationSrcFolder, this.getMigrationFolderPath())];
+                    case 1:
+                        _a.sent();
+                        return [2];
+                }
+            });
+        });
+    };
+    PluginInstance.prototype.copyTrackJson = function (fileName, trackJson) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, (0, writeTrackFile_1["default"])(fileName, trackJson, this.getTracksFolderPath())];
+                    case 1:
+                        _a.sent();
+                        return [2];
                 }
             });
         });

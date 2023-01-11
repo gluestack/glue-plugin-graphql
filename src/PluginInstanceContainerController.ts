@@ -7,16 +7,18 @@ import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 import IContainerController from "@gluestack/framework/types/plugin/interface/IContainerController";
 
 const defaultEnv: any = {
-  HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
-  HASURA_GRAPHQL_DEV_MODE: "true",
-  HASURA_GRAPHQL_ENABLED_LOG_TYPES:
-    "startup, http-log, webhook-log, websocket-log, query-log",
-  HASURA_GRAPHQL_ADMIN_SECRET: "secret",
-  HASURA_GRAPHQL_JWT_SECRET: JSON.stringify({
+  HASURA_GRAPHQL_ADMIN_SECRET: "admin-secret",
+		HASURA_GRAPHQL_JWT_SECRET: JSON.stringify({
     type: "HS256",
     key: "f7eb8518-a85e-45f1-983d-43ae8b5f92d7",
   }),
-  HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous",
+		HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "guest",
+		HASURA_GRAPHQL_LOG_LEVEL: "DEBUG",
+		HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
+		HASURA_GRAPHQL_CORS_DOMAIN: "*",
+		ACTION_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/actions",
+		EVENT_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/events",
+		HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
 };
 
 export class PluginInstanceContainerController
@@ -57,6 +59,9 @@ export class PluginInstanceContainerController
     }
 
     const dbEnv: any = {
+      HASURA_GRAPHQL_DB_NAME:  (await this.callerInstance
+          ?.getDbName()) || null,
+      HASURA_GRAPHQL_URL: `http://localhost:${await this.getPortNumber()}`,
       HASURA_GRAPHQL_METADATA_DATABASE_URL:
         (await this.callerInstance
           ?.getPostgresInstance()
