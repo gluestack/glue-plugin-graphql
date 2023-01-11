@@ -26,7 +26,7 @@ export async function writeEnv(graphqlInstance: PluginInstance, db: any) {
 
 	let env = "";
 	const keys: any = await constructEnvFromJson(db, port);
-	Object.keys(keys).map((key) => {
+	Object.keys(keys).forEach((key) => {
 		env += `${key}="${keys[key]}"
 `;
 	});

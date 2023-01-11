@@ -98,7 +98,7 @@ function writeEnv(graphqlInstance, db) {
                     return [4, constructEnvFromJson(db, port)];
                 case 2:
                     keys = _a.sent();
-                    Object.keys(keys).map(function (key) {
+                    Object.keys(keys).forEach(function (key) {
                         env += "".concat(key, "=\"").concat(keys[key], "\"\n");
                     });
                     fs.writeFileSync(path, env);
