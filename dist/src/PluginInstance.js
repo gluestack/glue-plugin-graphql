@@ -98,7 +98,7 @@ var PluginInstance = (function () {
         }
     };
     PluginInstance.prototype.getGraphqlURL = function () {
-        return "http://host.docker.internal:".concat(this.getContainerController().portNumber, "/v1/graphql");
+        return "http://".concat(this.getName(), ":").concat(this.getContainerController().portNumber, "/v1/graphql");
     };
     PluginInstance.prototype.getMetdataURL = function () {
         return "http://".concat(this.getContainerController().getIpAddress(), ":").concat(this.getContainerController().portNumber, "/v1/metadata");

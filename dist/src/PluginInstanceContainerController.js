@@ -41,17 +41,16 @@ var GlobalEnv = require("@gluestack/helpers").GlobalEnv;
 var DockerodeHelper = require("@gluestack/helpers").DockerodeHelper;
 var defaultEnv = {
     HASURA_GRAPHQL_ADMIN_SECRET: "admin-secret",
-    HASURA_GRAPHQL_JWT_SECRET: JSON.stringify({
-        type: "HS256",
-        key: "f7eb8518-a85e-45f1-983d-43ae8b5f92d7"
-    }),
+    HASURA_GRAPHQL_JWT_SECRET: "{\\\"type\\\": \\\"HS256\\\", \\\"key\\\": \\\"f7eb8518-a85e-45f1-983d-43ae8b5f92d7\\\"}",
     HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "guest",
     HASURA_GRAPHQL_LOG_LEVEL: "DEBUG",
     HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
     HASURA_GRAPHQL_CORS_DOMAIN: "*",
     ACTION_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/actions",
     EVENT_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/events",
-    HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+    HASURA_GRAPHQL_ENABLE_TELEMETRY: "false",
+    JWT_KEY: "HS256",
+    JWT_SECRET: "f7eb8518-a85e-45f1-983d-43ae8b5f92d7"
 };
 var PluginInstanceContainerController = (function () {
     function PluginInstanceContainerController(app, callerInstance) {

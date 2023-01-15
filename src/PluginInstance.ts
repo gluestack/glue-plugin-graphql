@@ -102,7 +102,7 @@ export class PluginInstance
   }
 
   getGraphqlURL(): string {
-    return `http://host.docker.internal:${
+    return `http://${this.getName()}:${
       this.getContainerController().portNumber
     }/v1/graphql`;
   }
