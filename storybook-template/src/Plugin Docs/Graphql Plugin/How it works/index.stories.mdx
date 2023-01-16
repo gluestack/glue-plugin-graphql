@@ -1,0 +1,41 @@
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+<Meta title="Graphql Plugin Docs/How It Works" />
+
+
+# How it works
+
+- GraphQL plugin is started by Glue Engine plugin.
+
+
+
+- Glue Engine plugin runs the graphql engine
+
+
+
+- In order to start this plugin we need to run the following command:
+    
+    ```bash
+    $ node glue develop:up
+    ```
+    
+    This command will start running the docker image of all the instances and plugin we have created. Here, in this case it will up the hasura image named as gql.
+    
+
+
+
+    
+- We can go to “[http://localhost:8080/console](http://localhost:8080/console)” and check our hasura console running.
+
+
+
+- Now we can go to our hasura console running on “[http://localhost:8080/console](http://localhost:8080/console)” and start our development from there.
+
+
+
+- In order to know how to start development using hausra we can refer to the hasura documentation. Here is the official link of hasura docs:
+[https://hasura.io/docs/latest/index/](https://hasura.io/docs/latest/index/).
+
+
+
+- In order to use our graphql endpoint to interact with our database by using quries  we can go to our hasura console and from there we can pick it up.
