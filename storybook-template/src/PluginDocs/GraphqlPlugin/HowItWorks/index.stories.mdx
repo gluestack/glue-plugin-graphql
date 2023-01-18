@@ -5,39 +5,99 @@ import { Canvas, Meta, Story } from "@storybook/addon-docs";
 
 # How it works
 
-- GraphQL plugin is started by **Glue Engine plugin**.
+##
 
+<br/>
 
+* ## Working
 
-- **Glue Engine plugin** runs the graphql engine.
+  <br/>
 
+  * GraphQL plugin is started by **Glue Engine plugin**.
+  
+  <br/>
+  
+  * **Glue Engine plugin** runs the graphql engine.
+  
+  <br/>
 
+  * Our directory stucture for the **graphql plugin instance** will be something
+    like this:
+    <br/>
 
-- In order to start this plugin we need to run the following command:
-    
+    ```
+      📦graphql
+        ┣ 📂metadata
+        ┃ ┣ 📂databases
+        ┃ ┃ ┣ 📂my_first_db
+        ┃ ┃ ┃ ┗ 📂tables
+        ┃ ┃ ┃ ┃ ┗ 📜tables.yaml
+        ┃ ┃ ┗ 📜databases.yaml
+        ┃ ┣ 📜actions.graphql
+        ┃ ┣ 📜actions.yaml
+        ┃ ┣ 📜allow_list.yaml
+        ┃ ┣ 📜api_limits.yaml
+        ┃ ┣ 📜cron_triggers.yaml
+        ┃ ┣ 📜graphql_schema_introspection.yaml
+        ┃ ┣ 📜inherited_roles.yaml
+        ┃ ┣ 📜metrics_config.yaml
+        ┃ ┣ 📜network.yaml
+        ┃ ┣ 📜query_collections.yaml
+        ┃ ┣ 📜remote_schemas.yaml
+        ┃ ┣ 📜rest_endpoints.yaml
+        ┃ ┗ 📜version.yaml
+        ┣ 📂migrations
+        ┃ ┗ 📂my_first_db
+        ┃ ┃ ┗ 📜.gitkeep
+        ┣ 📂seeds
+        ┣ 📂tracks
+        ┣ 📜.env
+        ┣ 📜README.md
+        ┣ 📜config.yaml
+        ┣ 📜package.json
+        ┗ 📜router.js
+    ```
+  <br/>
+  <br/>
+  
+  * In order to start this plugin we need to run the following command:
+
+    <br/>
+  
     ```bash
     $ node glue develop:up
     ```
-    
+    <br/>
+
     This command will start running the docker image of all the instances 
     and plugin we have created. Here, in this case it will up the hasura 
     image named as **graphql**.
+      
     
-
-
-
+    <br/>
     
-- We can go to “[http://localhost:8080/console](http://localhost:8080/console)” and check our hasura console running.
+      
+  * We can go to [http://localhost:8080/console](http://localhost:8080/console) and check our hasura console running.
+  
+  <br/>
+  
+  * Now we can go to our hasura console running on [http://localhost:8080/console](http://localhost:8080/console) and start our development from there.
+  
+  <br/>
+  
+  * In order to know how to start development using hausra we can refer to the hasura documentation. Here is the official link of hasura docs:
+  [https://hasura.io/docs/latest/index/](https://hasura.io/docs/latest/index/).
+  
+  <br/>
+  
+  
+  * In order to use our graphql endpoint to interact with our database by using quries  we can go to our hasura console and from there we can pick it up.
+  
+  <br/>
 
+* ## Instructions to start development with graphql plugin
 
+  <br/>
 
-- Now we can go to our hasura console running on “[http://localhost:8080/console](http://localhost:8080/console)” and start our development from there.
-
-
-
-- In order to know how to start development using hausra we can refer to the hasura documentation. Here is the official link of hasura docs:
-[https://hasura.io/docs/latest/index/](https://hasura.io/docs/latest/index/).
-
-
-
-- In order to use our graphql endpoint to interact with our database by using quries  we can go to our hasura console and from there we can pick it up.
+  * In order to start creating your own tables and schemas, creating RBAC for db interaction, everything, we need to go to hasura console,
+    running on **http://localhost:8080/console** and we can start our development from there.
