@@ -54,6 +54,18 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
   }
 
   async runPostInstall(instanceName: string, target: string) {
+    await this.checkAlreadyInstalled();
+    if (instanceName !== "graphql") {
+      console.log("\x1b[36m");
+      console.log(
+        `Install graphql instance: \`node glue add graphql graphql\``,
+      );
+      console.log("\x1b[31m");
+      throw new Error(
+        "graphql supports instance name `graphql` only",
+      );
+    }
+
     const postgresPlugin: GlueStackPlugin = this.app.getPluginByName(
       "@gluestack/glue-plugin-postgres",
     );
@@ -127,6 +139,20 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     // change router instance name for proxy
     const path = `${graphqlInstance.getInstallationPath()}/router.js`;
     await reWriteFile(path, instanceName, 'hasura');
+  }
+
+  async checkAlreadyInstalled() {
+    const graphqlPlugin: GlueStackPlugin = this.app.getPluginByName(
+      "@gluestack/glue-plugin-graphql",
+    );
+    //Validation
+    if (graphqlPlugin?.getInstances()?.[0]) {
+      throw new Error(
+        `graphql instance already installed as ${graphqlPlugin
+          .getInstances()[0]
+          .getName()}`,
+      );
+    }
   }
 
   createInstance(
