@@ -78,7 +78,15 @@ var GlueStackPlugin = (function () {
             var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path;
             return __generator(this, function (_h) {
                 switch (_h.label) {
-                    case 0:
+                    case 0: return [4, this.checkAlreadyInstalled()];
+                    case 1:
+                        _h.sent();
+                        if (instanceName !== "graphql") {
+                            console.log("\x1b[36m");
+                            console.log("Install graphql instance: `node glue add graphql graphql`");
+                            console.log("\x1b[31m");
+                            throw new Error("graphql supports instance name `graphql` only");
+                        }
                         postgresPlugin = this.app.getPluginByName("@gluestack/glue-plugin-postgres");
                         if (!postgresPlugin || !postgresPlugin.getInstances().length) {
                             console.log("\x1b[36m");
@@ -106,38 +114,53 @@ var GlueStackPlugin = (function () {
                             throw new Error("No ".concat(postgresPlugin.getName(), " instance has db configuration"));
                         }
                         return [4, this.app.createPluginInstance(this, instanceName, this.getTemplateFolderPath(), target)];
-                    case 1:
+                    case 2:
                         graphqlInstance = _h.sent();
                         return [4, (0, attachPostgresInstance_1.attachPostgresInstance)(graphqlInstance, postgresInstanceswithDB)];
-                    case 2:
+                    case 3:
                         _h.sent();
                         return [4, (0, write_env_1.writeEnv)(graphqlInstance, dbConfigs)];
-                    case 3:
+                    case 4:
                         _h.sent();
                         metadataDir = "".concat(graphqlInstance.getInstallationPath(), "/metadata/databases");
                         return [4, (0, renameDirectory_1["default"])(metadataDir, 'my_first_db', dbConfigs.db_name)];
-                    case 4:
+                    case 5:
                         _h.sent();
                         migraitonDir = "".concat(graphqlInstance.getInstallationPath(), "/migrations");
                         return [4, (0, renameDirectory_1["default"])(migraitonDir, 'my_first_db', dbConfigs.db_name)];
-                    case 5:
+                    case 6:
                         _h.sent();
                         yamlFile = "".concat(graphqlInstance.getInstallationPath(), "/metadata/databases/databases.yaml");
                         return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.db_name)];
-                    case 6:
-                        _h.sent();
-                        return [4, (0, reWriteFile_1["default"])(yamlFile, "".concat(dbConfigs.username, ":"), 'postgres:')];
                     case 7:
                         _h.sent();
-                        return [4, (0, reWriteFile_1["default"])(yamlFile, ":".concat(dbConfigs.password), ':postgrespass')];
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, "".concat(dbConfigs.username, ":"), 'postgres:')];
                     case 8:
+                        _h.sent();
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, ":".concat(dbConfigs.password), ':postgrespass')];
+                    case 9:
                         _h.sent();
                         path = "".concat(graphqlInstance.getInstallationPath(), "/router.js");
                         return [4, (0, reWriteFile_1["default"])(path, instanceName, 'hasura')];
-                    case 9:
+                    case 10:
                         _h.sent();
                         return [2];
                 }
+            });
+        });
+    };
+    GlueStackPlugin.prototype.checkAlreadyInstalled = function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var graphqlPlugin;
+            return __generator(this, function (_b) {
+                graphqlPlugin = this.app.getPluginByName("@gluestack/glue-plugin-graphql");
+                if ((_a = graphqlPlugin === null || graphqlPlugin === void 0 ? void 0 : graphqlPlugin.getInstances()) === null || _a === void 0 ? void 0 : _a[0]) {
+                    throw new Error("graphql instance already installed as ".concat(graphqlPlugin
+                        .getInstances()[0]
+                        .getName()));
+                }
+                return [2];
             });
         });
     };
