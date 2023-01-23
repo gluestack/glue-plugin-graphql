@@ -70,7 +70,7 @@ var GlueStackPlugin = (function () {
         return "".concat(process.cwd(), "/node_modules/").concat(this.getName(), "/template");
     };
     GlueStackPlugin.prototype.getInstallationPath = function (target) {
-        return "./backend/functions/".concat(target);
+        return "./backend/services/".concat(target);
     };
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
         var _a, _b, _c, _d, _e, _f;
