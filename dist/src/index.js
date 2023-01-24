@@ -75,7 +75,7 @@ var GlueStackPlugin = (function () {
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
         var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function () {
-            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path;
+            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path, configPath, envs;
             return __generator(this, function (_h) {
                 switch (_h.label) {
                     case 0: return [4, this.checkAlreadyInstalled()];
@@ -143,6 +143,13 @@ var GlueStackPlugin = (function () {
                         path = "".concat(graphqlInstance.getInstallationPath(), "/router.js");
                         return [4, (0, reWriteFile_1["default"])(path, instanceName, 'hasura')];
                     case 10:
+                        _h.sent();
+                        configPath = "".concat(graphqlInstance.getInstallationPath(), "/config.yaml");
+                        return [4, graphqlInstance.containerController.getEnv()];
+                    case 11:
+                        envs = _h.sent();
+                        return [4, (0, reWriteFile_1["default"])(configPath, envs.HASURA_GRAPHQL_URL, 'ENDPOINT')];
+                    case 12:
                         _h.sent();
                         return [2];
                 }

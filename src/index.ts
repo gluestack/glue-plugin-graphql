@@ -113,7 +113,6 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     );
 
     await attachPostgresInstance(graphqlInstance, postgresInstanceswithDB);
-
     await writeEnv(graphqlInstance, dbConfigs);
 
     // rename metadata Dir
@@ -139,6 +138,11 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     // change router instance name for proxy
     const path = `${graphqlInstance.getInstallationPath()}/router.js`;
     await reWriteFile(path, instanceName, 'hasura');
+
+    // change endpoint value in config.yaml file
+    const configPath = `${graphqlInstance.getInstallationPath()}/config.yaml`;
+    const envs: any = await graphqlInstance.containerController.getEnv();
+    await reWriteFile(configPath, envs.HASURA_GRAPHQL_URL, 'ENDPOINT');
   }
 
   async checkAlreadyInstalled() {
