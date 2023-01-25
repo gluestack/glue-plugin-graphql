@@ -1,5 +1,5 @@
 version: 3
-endpoint: http://localhost:8080
+endpoint: ENDPOINT
 admin_secret: secret
 metadata_directory: metadata
 actions:
