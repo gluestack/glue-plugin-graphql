@@ -4,7 +4,7 @@ import { IPortNumber } from "./interfaces/IPortNumber";
 const { DockerodeHelper } = require("@gluestack/helpers");
 import IApp from "@gluestack/framework/types/app/interface/IApp";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
-import IContainerController from "@gluestack/framework/types/plugin/interface/IContainerController";
+import IContainerController, { IRoutes } from "@gluestack/framework/types/plugin/interface/IContainerController";
 
 const defaultEnv: any = {
   HASURA_GRAPHQL_ADMIN_SECRET: "admin-secret",
@@ -58,8 +58,8 @@ export class PluginInstanceContainerController
     }
 
     const dbEnv: any = {
-      HASURA_GRAPHQL_DB_NAME:  (await this.callerInstance
-          ?.getDbName()) || null,
+      HASURA_GRAPHQL_DB_NAME: (await this.callerInstance
+        ?.getDbName()) || null,
       HASURA_GRAPHQL_URL: `http://localhost:${await this.getPortNumber()}`,
       HASURA_GRAPHQL_METADATA_DATABASE_URL:
         (await this.callerInstance
@@ -149,5 +149,13 @@ export class PluginInstanceContainerController
 
   async build() {
     // do nothing
+  }
+
+  async getRoutes(): Promise<IRoutes[]> {
+    const routes: IRoutes[] = [
+      { method: "POST", path: "/v1/graphql" }
+    ];
+
+    return Promise.resolve(routes);
   }
 }
