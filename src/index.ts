@@ -7,10 +7,13 @@ import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 import ILifeCycle from "@gluestack/framework/types/plugin/interface/ILifeCycle";
 import IManagesInstances from "@gluestack/framework/types/plugin/interface/IManagesInstances";
 import IGlueStorePlugin from "@gluestack/framework/types/store/interface/IGluePluginStore";
-import { attachPostgresInstance } from "./attachPostgresInstance";
+import { attachPostgresInstance } from "./helpers/attachPostgresInstance";
+
 import { writeEnv } from "./helpers/write-env";
 import renameDir from "./helpers/renameDirectory";
 import reWriteFile from "./helpers/reWriteFile";
+
+import { graphqlConsole } from "./commands/graphql-console";
 
 //Do not edit the name of this class
 export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
@@ -26,7 +29,7 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
   }
 
   init() {
-    //
+    this.app.addCommand((program: any) => graphqlConsole(program, this));
   }
 
   destroy() {

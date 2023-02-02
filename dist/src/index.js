@@ -42,10 +42,11 @@ exports.__esModule = true;
 exports.GlueStackPlugin = void 0;
 var package_json_1 = __importDefault(require("../package.json"));
 var PluginInstance_1 = require("./PluginInstance");
-var attachPostgresInstance_1 = require("./attachPostgresInstance");
+var attachPostgresInstance_1 = require("./helpers/attachPostgresInstance");
 var write_env_1 = require("./helpers/write-env");
 var renameDirectory_1 = __importDefault(require("./helpers/renameDirectory"));
 var reWriteFile_1 = __importDefault(require("./helpers/reWriteFile"));
+var graphql_console_1 = require("./commands/graphql-console");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = "stateless";
@@ -54,6 +55,8 @@ var GlueStackPlugin = (function () {
         this.gluePluginStore = gluePluginStore;
     }
     GlueStackPlugin.prototype.init = function () {
+        var _this = this;
+        this.app.addCommand(function (program) { return (0, graphql_console_1.graphqlConsole)(program, _this); });
     };
     GlueStackPlugin.prototype.destroy = function () {
     };
