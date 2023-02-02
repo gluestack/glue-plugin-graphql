@@ -23,32 +23,13 @@ import { Canvas, Meta, Story } from "@storybook/addon-docs";
 
   * Your directory stucture for the **graphql plugin instance** should be something
     like this:
+
     <br/>
 
     ```
       📦graphql
         ┣ 📂metadata
-        ┃ ┣ 📂databases
-        ┃ ┃ ┣ 📂my_first_db
-        ┃ ┃ ┃ ┗ 📂tables
-        ┃ ┃ ┃ ┃ ┗ 📜tables.yaml
-        ┃ ┃ ┗ 📜databases.yaml
-        ┃ ┣ 📜actions.graphql
-        ┃ ┣ 📜actions.yaml
-        ┃ ┣ 📜allow_list.yaml
-        ┃ ┣ 📜api_limits.yaml
-        ┃ ┣ 📜cron_triggers.yaml
-        ┃ ┣ 📜graphql_schema_introspection.yaml
-        ┃ ┣ 📜inherited_roles.yaml
-        ┃ ┣ 📜metrics_config.yaml
-        ┃ ┣ 📜network.yaml
-        ┃ ┣ 📜query_collections.yaml
-        ┃ ┣ 📜remote_schemas.yaml
-        ┃ ┣ 📜rest_endpoints.yaml
-        ┃ ┗ 📜version.yaml
         ┣ 📂migrations
-        ┃ ┗ 📂my_first_db
-        ┃ ┃ ┗ 📜.gitkeep
         ┣ 📂seeds
         ┣ 📂tracks
         ┣ 📜.env
@@ -70,8 +51,8 @@ import { Canvas, Meta, Story } from "@storybook/addon-docs";
     <br/>
 
     This command will start running the docker image of all the instances 
-    and plugin you have created. Here, in this case it will up the hasura 
-    image named as **graphql**.
+    and plugin you have created. Here, in this case it start running your
+    **graphql plugin instance**.
       
     
     <br/>
@@ -91,7 +72,7 @@ import { Canvas, Meta, Story } from "@storybook/addon-docs";
   <br/>
   
   
-  * In order to use your graphql endpoint to interact with your database by using quries you can go to your hasura console and from there You can pick it up.
+  * In order to use your graphql endpoint to interact with your database by using quries you can go to your hasura console and from there you can pick it up.
   
   <br/>
 
@@ -101,4 +82,3 @@ import { Canvas, Meta, Story } from "@storybook/addon-docs";
 
   * In order to start creating your own tables and schemas, creating RBAC for db interaction, and everything else you need to go to hasura console,
     running on **http://localhost:8080/console** and you can start your development from there.
-s
