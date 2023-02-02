@@ -25,6 +25,7 @@ export class PluginInstanceContainerController
   app: IApp;
   status: "up" | "down" = "down";
   portNumber: number;
+  consolePortNumber: number;
   containerId: string;
   callerInstance: PluginInstance;
 
@@ -33,6 +34,9 @@ export class PluginInstanceContainerController
     this.callerInstance = callerInstance;
     this.setStatus(this.callerInstance.gluePluginStore.get("status"));
     this.setPortNumber(this.callerInstance.gluePluginStore.get("port_number"));
+    this.setConsolePortNumber(
+      this.callerInstance.gluePluginStore.get("console_port_number"),
+    );
     this.setContainerId(
       this.callerInstance.gluePluginStore.get("container_id"),
     );
@@ -58,8 +62,7 @@ export class PluginInstanceContainerController
     }
 
     const dbEnv: any = {
-      HASURA_GRAPHQL_DB_NAME: (await this.callerInstance
-        ?.getDbName()) || null,
+      HASURA_GRAPHQL_DB_NAME: (await this.callerInstance?.getDbName()) || null,
       HASURA_GRAPHQL_URL: `http://localhost:${await this.getPortNumber()}`,
       HASURA_GRAPHQL_METADATA_DATABASE_URL:
         (await this.callerInstance
@@ -113,6 +116,30 @@ export class PluginInstanceContainerController
     });
   }
 
+  async getConsolePortNumber(returnDefault?: boolean) {
+    return new Promise((resolve, reject) => {
+      if (this.consolePortNumber) {
+        return resolve(this.consolePortNumber);
+      }
+      let ports =
+        this.callerInstance.callerPlugin.gluePluginStore.get("console_ports") ||
+        [];
+      DockerodeHelper.getPort(9695, ports)
+        .then((port: number) => {
+          this.setConsolePortNumber(port);
+          ports.push(port);
+          this.callerInstance.callerPlugin.gluePluginStore.set(
+            "console_ports",
+            ports,
+          );
+          return resolve(this.consolePortNumber);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
   getContainerId(): string {
     return this.containerId;
   }
@@ -125,6 +152,14 @@ export class PluginInstanceContainerController
   setPortNumber(portNumber: number) {
     this.callerInstance.gluePluginStore.set("port_number", portNumber || null);
     return (this.portNumber = portNumber || null);
+  }
+
+  setConsolePortNumber(consolePortNumber: number) {
+    this.callerInstance.gluePluginStore.set(
+      "console_port_number",
+      consolePortNumber || null,
+    );
+    return (this.consolePortNumber = consolePortNumber || null);
   }
 
   setContainerId(containerId: string) {
@@ -140,7 +175,8 @@ export class PluginInstanceContainerController
   }
 
   async up() {
-    // do nothing
+    await this.getPortNumber();
+    await this.getConsolePortNumber();
   }
 
   async down() {
