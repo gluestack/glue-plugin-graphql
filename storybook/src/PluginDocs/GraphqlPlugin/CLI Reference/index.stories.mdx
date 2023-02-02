@@ -1,0 +1,58 @@
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+<Meta title="Graphql Plugin Docs/CLI Reference" />
+
+# CLI Reference
+
+##
+
+<br/>
+
+
+
+
+* There is list of certain commands which are available in this plugin.
+  Below is description of those commands.
+
+<br/>
+
+* <details>
+  <summary>
+    <strong> graphql:console</strong>
+  </summary>
+
+  <br/>
+
+  * This command will run hasura console locally on your system and you can start your development from there.
+
+    In order to run hasura console you need to run the command in the following pattern:
+
+    <br/>
+
+    ```
+    $ node glue graphql:console <instance-name> --port <port-number>
+    ```
+
+    <br/>
+
+    For example, if you have already created a **Graphql Plugin Instance** with your instance
+    name as **graphql** and you want to run hasura console on port **9695**. Then in order to run
+    hasura console you need to enter the following command.
+
+    <br/>
+
+    ```
+    $ node glue graphql:console graphql --port 9695
+    ```
+    
+    <br/>
+
+    **Note:** Passing port number is optional. If you haven't passed the port number
+    Then by default it will start running on port 9695.
+
+    <br/>
+
+  </details>
+
+<br/>
+
