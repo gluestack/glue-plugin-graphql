@@ -59,6 +59,7 @@ var PluginInstanceContainerController = (function () {
         this.callerInstance = callerInstance;
         this.setStatus(this.callerInstance.gluePluginStore.get("status"));
         this.setPortNumber(this.callerInstance.gluePluginStore.get("port_number"));
+        this.setConsolePortNumber(this.callerInstance.gluePluginStore.get("console_port_number"));
         this.setContainerId(this.callerInstance.gluePluginStore.get("container_id"));
     }
     PluginInstanceContainerController.prototype.getCallerInstance = function () {
@@ -191,6 +192,29 @@ var PluginInstanceContainerController = (function () {
             });
         });
     };
+    PluginInstanceContainerController.prototype.getConsolePortNumber = function (returnDefault) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2, new Promise(function (resolve, reject) {
+                        if (_this.consolePortNumber) {
+                            return resolve(_this.consolePortNumber);
+                        }
+                        var ports = _this.callerInstance.callerPlugin.gluePluginStore.get("console_ports") ||
+                            [];
+                        DockerodeHelper.getPort(9695, ports)
+                            .then(function (port) {
+                            _this.setConsolePortNumber(port);
+                            ports.push(port);
+                            _this.callerInstance.callerPlugin.gluePluginStore.set("console_ports", ports);
+                            return resolve(_this.consolePortNumber);
+                        })["catch"](function (e) {
+                            reject(e);
+                        });
+                    })];
+            });
+        });
+    };
     PluginInstanceContainerController.prototype.getContainerId = function () {
         return this.containerId;
     };
@@ -202,6 +226,10 @@ var PluginInstanceContainerController = (function () {
         this.callerInstance.gluePluginStore.set("port_number", portNumber || null);
         return (this.portNumber = portNumber || null);
     };
+    PluginInstanceContainerController.prototype.setConsolePortNumber = function (consolePortNumber) {
+        this.callerInstance.gluePluginStore.set("console_port_number", consolePortNumber || null);
+        return (this.consolePortNumber = consolePortNumber || null);
+    };
     PluginInstanceContainerController.prototype.setContainerId = function (containerId) {
         this.callerInstance.gluePluginStore.set("container_id", containerId || null);
         return (this.containerId = containerId || null);
@@ -211,7 +239,15 @@ var PluginInstanceContainerController = (function () {
     PluginInstanceContainerController.prototype.up = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2];
+                switch (_a.label) {
+                    case 0: return [4, this.getPortNumber()];
+                    case 1:
+                        _a.sent();
+                        return [4, this.getConsolePortNumber()];
+                    case 2:
+                        _a.sent();
+                        return [2];
+                }
             });
         });
     };
@@ -226,6 +262,17 @@ var PluginInstanceContainerController = (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2];
+            });
+        });
+    };
+    PluginInstanceContainerController.prototype.getRoutes = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var routes;
+            return __generator(this, function (_a) {
+                routes = [
+                    { method: "POST", path: "/v1/graphql" }
+                ];
+                return [2, Promise.resolve(routes)];
             });
         });
     };

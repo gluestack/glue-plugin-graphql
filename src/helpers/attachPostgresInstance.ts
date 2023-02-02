@@ -1,5 +1,5 @@
 const prompts = require("prompts");
-import { PluginInstance } from "./PluginInstance";
+import { PluginInstance } from "../PluginInstance";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 
 export const setPostgresConfig = async (
