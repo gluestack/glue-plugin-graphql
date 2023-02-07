@@ -43,6 +43,7 @@ export async function runner(
     '--skip-update-check'
   ], {
     cwd: installationPath,
-    stdio: 'inherit'
+    stdio: 'inherit',
+    shell: true,
   });
 }

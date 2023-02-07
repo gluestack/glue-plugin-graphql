@@ -73,7 +73,8 @@ function runner(instanceName, options, glueStackPlugin) {
                             '--skip-update-check'
                         ], {
                             cwd: installationPath,
-                            stdio: 'inherit'
+                            stdio: 'inherit',
+                            shell: true
                         })];
                 case 1:
                     _a.sent();
