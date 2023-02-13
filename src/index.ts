@@ -91,11 +91,15 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
       if (
         instance.gluePluginStore.get("db_config")?.username &&
         instance.gluePluginStore.get("db_config")?.db_name &&
-        instance.gluePluginStore.get("db_config")?.password
+        instance.gluePluginStore.get("db_config")?.password && 
+        instance.gluePluginStore.get("db_config")?.db_host &&
+        instance.gluePluginStore.get("db_config")?.db_port
       ) {
         dbConfigs.username = instance.gluePluginStore.get("db_config")?.username;
         dbConfigs.db_name = instance.gluePluginStore.get("db_config")?.db_name;
         dbConfigs.password = instance.gluePluginStore.get("db_config")?.password;
+        dbConfigs.db_host = instance.gluePluginStore.get("db_config")?.db_host;
+        dbConfigs.db_port = instance.gluePluginStore.get("db_config")?.db_port;
         dbConfigs.port = instance.gluePluginStore.get("port_number");
 
         hasDBConfig = true;

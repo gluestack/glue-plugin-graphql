@@ -4,6 +4,7 @@ import { IPortNumber } from "./interfaces/IPortNumber";
 const { DockerodeHelper } = require("@gluestack/helpers");
 import IApp from "@gluestack/framework/types/app/interface/IApp";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
+// @ts-ignore
 import IContainerController, { IRoutes } from "@gluestack/framework/types/plugin/interface/IContainerController";
 
 const defaultEnv: any = {
