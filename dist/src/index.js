@@ -76,14 +76,14 @@ var GlueStackPlugin = (function () {
         return "./backend/services/".concat(target);
     };
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return __awaiter(this, void 0, void 0, function () {
-            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _g, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path, configPath, envs;
-            return __generator(this, function (_h) {
-                switch (_h.label) {
+            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _l, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path, configPath, envs;
+            return __generator(this, function (_m) {
+                switch (_m.label) {
                     case 0: return [4, this.checkAlreadyInstalled()];
                     case 1:
-                        _h.sent();
+                        _m.sent();
                         if (instanceName !== "graphql") {
                             console.log("\x1b[36m");
                             console.log("Install graphql instance: `node glue add graphql graphql`");
@@ -100,14 +100,18 @@ var GlueStackPlugin = (function () {
                         hasDBConfig = false;
                         postgresInstanceswithDB = [];
                         dbConfigs = {};
-                        for (_i = 0, _g = postgresPlugin.getInstances(); _i < _g.length; _i++) {
-                            instance = _g[_i];
+                        for (_i = 0, _l = postgresPlugin.getInstances(); _i < _l.length; _i++) {
+                            instance = _l[_i];
                             if (((_a = instance.gluePluginStore.get("db_config")) === null || _a === void 0 ? void 0 : _a.username) &&
                                 ((_b = instance.gluePluginStore.get("db_config")) === null || _b === void 0 ? void 0 : _b.db_name) &&
-                                ((_c = instance.gluePluginStore.get("db_config")) === null || _c === void 0 ? void 0 : _c.password)) {
-                                dbConfigs.username = (_d = instance.gluePluginStore.get("db_config")) === null || _d === void 0 ? void 0 : _d.username;
-                                dbConfigs.db_name = (_e = instance.gluePluginStore.get("db_config")) === null || _e === void 0 ? void 0 : _e.db_name;
-                                dbConfigs.password = (_f = instance.gluePluginStore.get("db_config")) === null || _f === void 0 ? void 0 : _f.password;
+                                ((_c = instance.gluePluginStore.get("db_config")) === null || _c === void 0 ? void 0 : _c.password) &&
+                                ((_d = instance.gluePluginStore.get("db_config")) === null || _d === void 0 ? void 0 : _d.db_host) &&
+                                ((_e = instance.gluePluginStore.get("db_config")) === null || _e === void 0 ? void 0 : _e.db_port)) {
+                                dbConfigs.username = (_f = instance.gluePluginStore.get("db_config")) === null || _f === void 0 ? void 0 : _f.username;
+                                dbConfigs.db_name = (_g = instance.gluePluginStore.get("db_config")) === null || _g === void 0 ? void 0 : _g.db_name;
+                                dbConfigs.password = (_h = instance.gluePluginStore.get("db_config")) === null || _h === void 0 ? void 0 : _h.password;
+                                dbConfigs.db_host = (_j = instance.gluePluginStore.get("db_config")) === null || _j === void 0 ? void 0 : _j.db_host;
+                                dbConfigs.db_port = (_k = instance.gluePluginStore.get("db_config")) === null || _k === void 0 ? void 0 : _k.db_port;
                                 dbConfigs.port = instance.gluePluginStore.get("port_number");
                                 hasDBConfig = true;
                                 postgresInstanceswithDB.push(instance);
@@ -118,42 +122,42 @@ var GlueStackPlugin = (function () {
                         }
                         return [4, this.app.createPluginInstance(this, instanceName, this.getTemplateFolderPath(), target)];
                     case 2:
-                        graphqlInstance = _h.sent();
+                        graphqlInstance = _m.sent();
                         return [4, (0, attachPostgresInstance_1.attachPostgresInstance)(graphqlInstance, postgresInstanceswithDB)];
                     case 3:
-                        _h.sent();
+                        _m.sent();
                         return [4, (0, write_env_1.writeEnv)(graphqlInstance, dbConfigs)];
                     case 4:
-                        _h.sent();
+                        _m.sent();
                         metadataDir = "".concat(graphqlInstance.getInstallationPath(), "/metadata/databases");
                         return [4, (0, renameDirectory_1["default"])(metadataDir, 'my_first_db', dbConfigs.db_name)];
                     case 5:
-                        _h.sent();
+                        _m.sent();
                         migraitonDir = "".concat(graphqlInstance.getInstallationPath(), "/migrations");
                         return [4, (0, renameDirectory_1["default"])(migraitonDir, 'my_first_db', dbConfigs.db_name)];
                     case 6:
-                        _h.sent();
+                        _m.sent();
                         yamlFile = "".concat(graphqlInstance.getInstallationPath(), "/metadata/databases/databases.yaml");
                         return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.db_name)];
                     case 7:
-                        _h.sent();
+                        _m.sent();
                         return [4, (0, reWriteFile_1["default"])(yamlFile, "".concat(dbConfigs.username, ":"), 'postgres:')];
                     case 8:
-                        _h.sent();
+                        _m.sent();
                         return [4, (0, reWriteFile_1["default"])(yamlFile, ":".concat(dbConfigs.password), ':postgrespass')];
                     case 9:
-                        _h.sent();
+                        _m.sent();
                         path = "".concat(graphqlInstance.getInstallationPath(), "/router.js");
                         return [4, (0, reWriteFile_1["default"])(path, instanceName, 'hasura')];
                     case 10:
-                        _h.sent();
+                        _m.sent();
                         configPath = "".concat(graphqlInstance.getInstallationPath(), "/config.yaml");
                         return [4, graphqlInstance.containerController.getEnv()];
                     case 11:
-                        envs = _h.sent();
+                        envs = _m.sent();
                         return [4, (0, reWriteFile_1["default"])(configPath, envs.HASURA_GRAPHQL_URL, 'ENDPOINT')];
                     case 12:
-                        _h.sent();
+                        _m.sent();
                         return [2];
                 }
             });
