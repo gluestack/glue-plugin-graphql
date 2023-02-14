@@ -47,6 +47,7 @@ var write_env_1 = require("./helpers/write-env");
 var renameDirectory_1 = __importDefault(require("./helpers/renameDirectory"));
 var reWriteFile_1 = __importDefault(require("./helpers/reWriteFile"));
 var graphql_console_1 = require("./commands/graphql-console");
+var update_workspaces_1 = require("./helpers/update-workspaces");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = "stateless";
@@ -78,7 +79,7 @@ var GlueStackPlugin = (function () {
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return __awaiter(this, void 0, void 0, function () {
-            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _l, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path, configPath, envs;
+            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _l, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path, configPath, envs, pluginPackage, rootPackage;
             return __generator(this, function (_m) {
                 switch (_m.label) {
                     case 0: return [4, this.checkAlreadyInstalled()];
@@ -157,6 +158,14 @@ var GlueStackPlugin = (function () {
                         envs = _m.sent();
                         return [4, (0, reWriteFile_1["default"])(configPath, envs.HASURA_GRAPHQL_URL, 'ENDPOINT')];
                     case 12:
+                        _m.sent();
+                        pluginPackage = "".concat(graphqlInstance.getInstallationPath(), "/package.json");
+                        return [4, (0, reWriteFile_1["default"])(pluginPackage, instanceName, 'INSTANCENAME')];
+                    case 13:
+                        _m.sent();
+                        rootPackage = "".concat(process.cwd(), "/package.json");
+                        return [4, (0, update_workspaces_1.updateWorkspaces)(rootPackage, graphqlInstance.getInstallationPath())];
+                    case 14:
                         _m.sent();
                         return [2];
                 }

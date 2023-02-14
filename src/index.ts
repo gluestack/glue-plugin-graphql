@@ -14,6 +14,7 @@ import renameDir from "./helpers/renameDirectory";
 import reWriteFile from "./helpers/reWriteFile";
 
 import { graphqlConsole } from "./commands/graphql-console";
+import { updateWorkspaces } from "./helpers/update-workspaces";
 
 //Do not edit the name of this class
 export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
@@ -91,7 +92,7 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
       if (
         instance.gluePluginStore.get("db_config")?.username &&
         instance.gluePluginStore.get("db_config")?.db_name &&
-        instance.gluePluginStore.get("db_config")?.password && 
+        instance.gluePluginStore.get("db_config")?.password &&
         instance.gluePluginStore.get("db_config")?.db_host &&
         instance.gluePluginStore.get("db_config")?.db_port
       ) {
@@ -150,6 +151,14 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     const configPath = `${graphqlInstance.getInstallationPath()}/config.yaml`;
     const envs: any = await graphqlInstance.containerController.getEnv();
     await reWriteFile(configPath, envs.HASURA_GRAPHQL_URL, 'ENDPOINT');
+
+    // update package.json'S name index with the new instance name
+    const pluginPackage = `${graphqlInstance.getInstallationPath()}/package.json`;
+    await reWriteFile(pluginPackage, instanceName, 'INSTANCENAME');
+
+    // update root package.json's workspaces with the new instance name
+    const rootPackage = `${process.cwd()}/package.json`;
+    await updateWorkspaces(rootPackage, graphqlInstance.getInstallationPath());
   }
 
   async checkAlreadyInstalled() {
