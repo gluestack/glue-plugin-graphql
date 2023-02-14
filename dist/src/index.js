@@ -48,6 +48,8 @@ var renameDirectory_1 = __importDefault(require("./helpers/renameDirectory"));
 var reWriteFile_1 = __importDefault(require("./helpers/reWriteFile"));
 var graphql_console_1 = require("./commands/graphql-console");
 var update_workspaces_1 = require("./helpers/update-workspaces");
+var node_fs_1 = require("node:fs");
+var node_path_1 = require("node:path");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = "stateless";
@@ -167,6 +169,7 @@ var GlueStackPlugin = (function () {
                         return [4, (0, update_workspaces_1.updateWorkspaces)(rootPackage, graphqlInstance.getInstallationPath())];
                     case 14:
                         _m.sent();
+                        (0, node_fs_1.mkdirSync)((0, node_path_1.join)(graphqlInstance.getInstallationPath(), 'seeds', dbConfigs.db_name));
                         return [2];
                 }
             });
