@@ -48,8 +48,6 @@ var renameDirectory_1 = __importDefault(require("./helpers/renameDirectory"));
 var reWriteFile_1 = __importDefault(require("./helpers/reWriteFile"));
 var graphql_console_1 = require("./commands/graphql-console");
 var update_workspaces_1 = require("./helpers/update-workspaces");
-var node_fs_1 = require("node:fs");
-var node_path_1 = require("node:path");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = "stateless";
@@ -81,7 +79,7 @@ var GlueStackPlugin = (function () {
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return __awaiter(this, void 0, void 0, function () {
-            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _l, instance, graphqlInstance, metadataDir, migraitonDir, yamlFile, path, configPath, envs, pluginPackage, rootPackage;
+            var postgresPlugin, hasDBConfig, postgresInstanceswithDB, dbConfigs, _i, _l, instance, graphqlInstance, metadataDir, migraitonDir, seedDir, yamlFile, path, configPath, envs, pluginPackage, rootPackage;
             return __generator(this, function (_m) {
                 switch (_m.label) {
                     case 0: return [4, this.checkAlreadyInstalled()];
@@ -140,36 +138,39 @@ var GlueStackPlugin = (function () {
                         return [4, (0, renameDirectory_1["default"])(migraitonDir, 'my_first_db', dbConfigs.db_name)];
                     case 6:
                         _m.sent();
-                        yamlFile = "".concat(graphqlInstance.getInstallationPath(), "/metadata/databases/databases.yaml");
-                        return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.db_name)];
+                        seedDir = "".concat(graphqlInstance.getInstallationPath(), "/seeds");
+                        return [4, (0, renameDirectory_1["default"])(seedDir, 'my_first_db', dbConfigs.db_name)];
                     case 7:
                         _m.sent();
-                        return [4, (0, reWriteFile_1["default"])(yamlFile, "".concat(dbConfigs.username, ":"), 'postgres:')];
+                        yamlFile = "".concat(graphqlInstance.getInstallationPath(), "/metadata/databases/databases.yaml");
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, dbConfigs.db_name)];
                     case 8:
                         _m.sent();
-                        return [4, (0, reWriteFile_1["default"])(yamlFile, ":".concat(dbConfigs.password), ':postgrespass')];
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, "".concat(dbConfigs.username, ":"), 'postgres:')];
                     case 9:
+                        _m.sent();
+                        return [4, (0, reWriteFile_1["default"])(yamlFile, ":".concat(dbConfigs.password), ':postgrespass')];
+                    case 10:
                         _m.sent();
                         path = "".concat(graphqlInstance.getInstallationPath(), "/router.js");
                         return [4, (0, reWriteFile_1["default"])(path, instanceName, 'hasura')];
-                    case 10:
+                    case 11:
                         _m.sent();
                         configPath = "".concat(graphqlInstance.getInstallationPath(), "/config.yaml");
                         return [4, graphqlInstance.containerController.getEnv()];
-                    case 11:
+                    case 12:
                         envs = _m.sent();
                         return [4, (0, reWriteFile_1["default"])(configPath, envs.HASURA_GRAPHQL_URL, 'ENDPOINT')];
-                    case 12:
+                    case 13:
                         _m.sent();
                         pluginPackage = "".concat(graphqlInstance.getInstallationPath(), "/package.json");
                         return [4, (0, reWriteFile_1["default"])(pluginPackage, instanceName, 'INSTANCENAME')];
-                    case 13:
+                    case 14:
                         _m.sent();
                         rootPackage = "".concat(process.cwd(), "/package.json");
                         return [4, (0, update_workspaces_1.updateWorkspaces)(rootPackage, graphqlInstance.getInstallationPath())];
-                    case 14:
+                    case 15:
                         _m.sent();
-                        (0, node_fs_1.mkdirSync)((0, node_path_1.join)(graphqlInstance.getInstallationPath(), 'seeds', dbConfigs.db_name));
                         return [2];
                 }
             });

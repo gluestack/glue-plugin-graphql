@@ -16,10 +16,7 @@ import reWriteFile from "./helpers/reWriteFile";
 import { graphqlConsole } from "./commands/graphql-console";
 import { updateWorkspaces } from "./helpers/update-workspaces";
 
-import { mkdirSync } from "node:fs";
-import { join } from "node:path";
-
-//Do not edit the name of this class
+// Do not edit the name of this class
 export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
   app: IApp;
   instances: IInstance[];
@@ -126,13 +123,17 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     await attachPostgresInstance(graphqlInstance, postgresInstanceswithDB);
     await writeEnv(graphqlInstance, dbConfigs);
 
-    // rename metadata Dir
+    // rename metadata directory
     const metadataDir = `${graphqlInstance.getInstallationPath()}/metadata/databases`;
-    await renameDir(metadataDir, 'my_first_db', dbConfigs.db_name)
+    await renameDir(metadataDir, 'my_first_db', dbConfigs.db_name);
 
-    // rename migrations Dir
+    // rename migrations directory
     const migraitonDir = `${graphqlInstance.getInstallationPath()}/migrations`;
-    await renameDir(migraitonDir, 'my_first_db', dbConfigs.db_name)
+    await renameDir(migraitonDir, 'my_first_db', dbConfigs.db_name);
+
+    // rename seeds directory
+    const seedDir = `${graphqlInstance.getInstallationPath()}/seeds`;
+    await renameDir(seedDir, 'my_first_db', dbConfigs.db_name);
 
     // replace string in database.yaml file
     const yamlFile = `${graphqlInstance.getInstallationPath()}/metadata/databases/databases.yaml`;
@@ -162,8 +163,6 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
     // update root package.json's workspaces with the new instance name
     const rootPackage = `${process.cwd()}/package.json`;
     await updateWorkspaces(rootPackage, graphqlInstance.getInstallationPath());
-
-    mkdirSync(join(graphqlInstance.getInstallationPath(), 'seeds', dbConfigs.db_name));
   }
 
   async checkAlreadyInstalled() {
