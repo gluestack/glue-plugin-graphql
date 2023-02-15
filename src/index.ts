@@ -14,7 +14,7 @@ import renameDir from "./helpers/renameDirectory";
 import reWriteFile from "./helpers/reWriteFile";
 
 import { graphqlConsole } from "./commands/graphql-console";
-import { updateWorkspaces } from "./helpers/update-workspaces";
+const { Workspaces } = require("@gluestack/helpers")
 
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -161,7 +161,7 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
 
     // update root package.json's workspaces with the new instance name
     const rootPackage = `${process.cwd()}/package.json`;
-    await updateWorkspaces(rootPackage, graphqlInstance.getInstallationPath());
+    await Workspaces.append(rootPackage, graphqlInstance.getInstallationPath());
 
     mkdirSync(join(graphqlInstance.getInstallationPath(), 'seeds', dbConfigs.db_name));
   }
