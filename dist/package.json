@@ -1,6 +1,6 @@
 {
     "name": "@gluestack/glue-plugin-graphql",
-    "version": "0.0.39",
+    "version": "0.0.40",
     "description": "gluestack plugin for graphql",
     "repository": {
         "type": "git",
@@ -10,7 +10,6 @@
         "npm",
         "glue-plugin-graphql"
     ],
-    "author": "Shivam Singhal",
     "license": "ISC",
     "main": "dist/src/index.js",
     "scripts": {
@@ -19,8 +18,8 @@
     },
     "dependencies": {
         "@gluestack/framework": "^0.0.x",
-        "@gluestack/glue-plugin-postgres": "^0.0.x",
         "@gluestack/helpers": "^0.0.x",
+        "@gluestack/glue-plugin-postgres": "^0.0.x",
         "@types/node": "^18.11.16",
         "fs-extra": "^11.1.0",
         "prompts": "^2.4.2",
@@ -29,7 +28,6 @@
     "devDependencies": {
         "@gluestack/framework": "^0.0.x",
         "@gluestack/glue-plugin-postgres": "^0.0.x",
-        "@gluestack/helpers": "^0.0.x",
         "typescript": "^4.9.4"
     },
     "peerDependencies": {

@@ -47,7 +47,7 @@ var write_env_1 = require("./helpers/write-env");
 var renameDirectory_1 = __importDefault(require("./helpers/renameDirectory"));
 var reWriteFile_1 = __importDefault(require("./helpers/reWriteFile"));
 var graphql_console_1 = require("./commands/graphql-console");
-var update_workspaces_1 = require("./helpers/update-workspaces");
+var Workspaces = require("@gluestack/helpers").Workspaces;
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = "stateless";
@@ -168,7 +168,7 @@ var GlueStackPlugin = (function () {
                     case 14:
                         _m.sent();
                         rootPackage = "".concat(process.cwd(), "/package.json");
-                        return [4, (0, update_workspaces_1.updateWorkspaces)(rootPackage, graphqlInstance.getInstallationPath())];
+                        return [4, Workspaces.append(rootPackage, graphqlInstance.getInstallationPath())];
                     case 15:
                         _m.sent();
                         return [2];
