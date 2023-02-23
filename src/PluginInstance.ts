@@ -91,7 +91,7 @@ export class PluginInstance
         "@gluestack/glue-plugin-postgres",
       );
       if (plugin) {
-        plugin.getInstances().map((instance: IInstance & IPostgres) => {
+        plugin.getInstances().forEach((instance: IInstance & IPostgres) => {
           if (instance.getName() === postgres_instance) {
             postgresInstance = instance;
           }

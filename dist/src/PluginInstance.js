@@ -88,7 +88,7 @@ var PluginInstance = (function () {
         if (postgres_instance) {
             var plugin = this.app.getPluginByName("@gluestack/glue-plugin-postgres");
             if (plugin) {
-                plugin.getInstances().map(function (instance) {
+                plugin.getInstances().forEach(function (instance) {
                     if (instance.getName() === postgres_instance) {
                         postgresInstance = instance;
                     }
