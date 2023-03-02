@@ -1,5 +1,5 @@
 {
-  "name": "INSTANCENAME",
+  "name": "@project/INSTANCENAME",
   "description": "",
   "scripts": {
     "sync:hasura": "npm run apply:metadata && npm run apply:migrate && npm run clear:metadata && npm run apply:metadata",
