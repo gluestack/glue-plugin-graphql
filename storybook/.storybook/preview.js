@@ -9,4 +9,13 @@ export const parameters = {
   docs: {
     // inlineStories: false,
   },
+  options: {
+    storySort: {
+      method: 'alphabetical',
+      order: [
+        'Graphql Plugin',
+        ['Getting Started', 'Requirements', 'How to install', 'CLI Reference'],
+      ]
+    },
+  },
 };
