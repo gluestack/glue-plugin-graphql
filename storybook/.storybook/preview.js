@@ -14,7 +14,7 @@ export const parameters = {
       method: 'alphabetical',
       order: [
         'Graphql Plugin',
-        ['Getting Started', 'Requirements', 'How to install', 'CLI Reference'],
+        ['Getting Started', 'Requirements', 'How to Install', 'CLI Reference'],
       ]
     },
   },
