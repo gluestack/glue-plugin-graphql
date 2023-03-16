@@ -1,25 +1,11 @@
 import { PluginInstance } from "./PluginInstance";
-const { GlobalEnv } = require("@gluestack/helpers");
 import { IPortNumber } from "./interfaces/IPortNumber";
 const { DockerodeHelper } = require("@gluestack/helpers");
 import IApp from "@gluestack/framework/types/app/interface/IApp";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 // @ts-ignore
 import IContainerController, { IRoutes } from "@gluestack/framework/types/plugin/interface/IContainerController";
-
-const defaultEnv: any = {
-  HASURA_GRAPHQL_ADMIN_SECRET: "admin-secret",
-  HASURA_GRAPHQL_JWT_SECRET: "{\\\"type\\\": \\\"HS256\\\", \\\"key\\\": \\\"f7eb8518-a85e-45f1-983d-43ae8b5f92d7\\\"}",
-  HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "guest",
-  HASURA_GRAPHQL_LOG_LEVEL: "DEBUG",
-  HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
-  HASURA_GRAPHQL_CORS_DOMAIN: "*",
-  ACTION_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/actions",
-  EVENT_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/events",
-  HASURA_GRAPHQL_ENABLE_TELEMETRY: "false",
-  JWT_KEY: "HS256",
-  JWT_SECRET: "f7eb8518-a85e-45f1-983d-43ae8b5f92d7"
-};
+import { getCrossEnvKey } from "@gluestack/helpers";
 
 export class PluginInstanceContainerController
   implements IContainerController, IPortNumber {
@@ -47,40 +33,25 @@ export class PluginInstanceContainerController
     return this.callerInstance;
   }
 
-  async getFromGlobalEnv(key: string, defaultValue?: string) {
-    const value = await GlobalEnv.get(this.callerInstance.getName(), key);
-    if (!value) {
-      await GlobalEnv.set(this.callerInstance.getName(), key, defaultValue);
-      return defaultValue;
-    }
-    return value;
-  }
-
   async getEnv() {
-    const env: any = {};
-    for (const key in defaultEnv) {
-      env[key] = await this.getFromGlobalEnv(key, defaultEnv[key]);
-    }
+    const env: any = {
+      HASURA_GRAPHQL_ADMIN_SECRET: "admin-secret",
+      HASURA_GRAPHQL_JWT_SECRET: "{\\\"type\\\": \\\"HS256\\\", \\\"key\\\": \\\"f7eb8518-a85e-45f1-983d-43ae8b5f92d7\\\"}",
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "guest",
+      HASURA_GRAPHQL_LOG_LEVEL: "DEBUG",
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true",
+      HASURA_GRAPHQL_CORS_DOMAIN: "*",
+      ACTION_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/actions",
+      EVENT_BASE_URL: "http://engine:3500/v1.0/invoke/engine/method/events",
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false",
+      JWT_KEY: "HS256",
+      JWT_SECRET: "f7eb8518-a85e-45f1-983d-43ae8b5f92d7",
 
-    const dbEnv: any = {
-      HASURA_GRAPHQL_DB_NAME: (await this.callerInstance?.getDbName()) || null,
+      HASURA_GRAPHQL_DB_NAME: this.getEnvKey("POSTGRES_DB"),
       HASURA_GRAPHQL_URL: `http://localhost:${await this.getPortNumber()}`,
-      HASURA_GRAPHQL_METADATA_DATABASE_URL:
-        (await this.callerInstance
-          ?.getPostgresInstance()
-          ?.getConnectionString()) || null,
-      HASURA_GRAPHQL_DATABASE_URL:
-        (await this.callerInstance
-          ?.getPostgresInstance()
-          ?.getConnectionString()) || null,
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: this.getEnvKey("POSTGRES_STRING"),
+      HASURA_GRAPHQL_DATABASE_URL: this.getEnvKey("POSTGRES_STRING"),
     };
-    for (const key in dbEnv) {
-      env[key] = await this.getFromGlobalEnv(key, dbEnv[key]);
-    }
-    if (!env.HASURA_GRAPHQL_DATABASE_URL) {
-      throw new Error("Postgres instance not set");
-    }
-
     return env;
   }
 
@@ -194,5 +165,9 @@ export class PluginInstanceContainerController
     ];
 
     return Promise.resolve(routes);
+  }
+
+  getEnvKey(key: string) {
+    return `%${getCrossEnvKey(this.callerInstance?.getPostgresInstance().getName(), key)}%`;
   }
 }
