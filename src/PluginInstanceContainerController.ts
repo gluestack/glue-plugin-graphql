@@ -46,6 +46,7 @@ export class PluginInstanceContainerController
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false",
       JWT_KEY: "HS256",
       JWT_SECRET: "f7eb8518-a85e-45f1-983d-43ae8b5f92d7",
+      GRAPHQL_URL: `http://${this.callerInstance.getName()}:8080/v1/graphql`,
 
       HASURA_GRAPHQL_DB_NAME: this.getEnvKey("POSTGRES_DB"),
       HASURA_GRAPHQL_URL: `http://localhost:${await this.getPortNumber()}`,
